@@ -1356,7 +1356,7 @@ function render(o,r,keep){
         link='<div class="link">'+esc(t)+'</div>';
       }
       h+='<div class="it"><div class="tm">'+x.time+'</div><div><div><span class="tag'+(e?' e':'')+(lab==='午餐'?' lu':lab==='點心'?' sn':lab==='晚餐'?' di':'')+'">'+lab+'</span><span class="nm">'+esc(x.n)+'</span></div>'
-        +'<div class="meta">'+esc(x.a)+'｜'+$m(x)+(e?'':'｜約 '+x.h+' 小時')+'</div><div class="note">'+esc(x.d)+'</div>'+link+'</div></div>';
+        +'<div class="meta">'+esc(x.a)+'｜'+$m(x)+(e?'':'｜<span style="white-space:nowrap">約 '+x.h+' 小時</span>')+'</div><div class="note">'+esc(x.d)+'</div>'+link+'</div></div>';
     });
     h+='</div>';
   });

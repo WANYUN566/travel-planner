@@ -1215,6 +1215,9 @@ function pdfFrom(pages){
   return new Blob(parts,{type:'application/pdf'});
 }
 function msg(t){const m=$('#dlmsg');if(m)m.textContent=t}
+const INAPP=/\bLine\/|FBAN|FBAV|FB_IAB|Instagram|Barcelona|Threads|Messenger|MicroMessenger/i.test(navigator.userAgent);
+const INAPP_TIP='你現在是在 LINE、IG、Facebook 或 Threads 等 App 裡打開這個網頁，這類 App 不能直接下載檔案。';
+const SAFARI_TIP='也可以點右上角或右下角的選單（⋯ 或 ⋮），選「用 Safari 打開」（Android 選「用瀏覽器開啟」），再按下載。';
 async function download(name,data,type){
   const b=data instanceof Blob?data:new Blob(['\ufeff'+data],{type:type||'text/plain;charset=utf-8'});
   msg('正在準備檔案…');
@@ -1227,6 +1230,7 @@ async function download(name,data,type){
       catch(e){msg((e&&e.code)==='declined'?'你取消了存檔。':'存檔沒有成功（'+((e&&(e.code||e.message))||'未知原因')+'）。');return false}
     }
   }
+  if(INAPP)return false;
   if(!c){
     const u=URL.createObjectURL(b),a=document.createElement('a');
     a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
@@ -1240,12 +1244,12 @@ async function download(name,data,type){
 function showPages(pg){
   const g=$('#pgs');if(!g)return;
   g.innerHTML=pg.map((c,i)=>'<img alt="行程第 '+(i+1)+' 頁" src="'+c.toDataURL('image/jpeg',0.85)+'" style="width:100%;margin-top:8px;border:1px solid var(--line)">').join('');
-  msg('無法直接存成 PDF。下面是行程圖片：長按圖片，選「加入照片」或「儲存到照片」就能保存。');
+  msg((INAPP?INAPP_TIP:'無法直接存成 PDF。')+'下面是行程圖片：長按圖片，選「加入照片」或「儲存到照片」就能保存。'+(INAPP?SAFARI_TIP:''));
 }
 function showText(t){
   const x=$('#txtbox');if(!x)return;
   x.value=t;x.hidden=false;
-  msg('無法直接存檔。下面是文字內容：點一下文字框，全選後拷貝，再貼到備忘錄就能保存。');
+  msg((INAPP?INAPP_TIP:'無法直接存檔。')+'下面是文字內容：點一下文字框，全選後拷貝，再貼到備忘錄就能保存。'+(INAPP?SAFARI_TIP:''));
 }
 function swapDay(o,r,di){
   const {S,F}=D[o.dest],bud=o.bud,kid=o.who==='kid',less=o.who==='elder'||o.avoid.includes('walk'),av=o.avoid;
@@ -1358,6 +1362,7 @@ function render(o,r,keep){
   });
   h+='<button class="ghost" type="button" id="dlp">下載成 PDF</button> <button class="ghost" type="button" id="dl">下載成文字檔</button> <button class="ghost" type="button" id="back">回到上方改條件，再挑一次</button><div class="warn" style="margin-top:10px;font-size:18px;font-weight:600">提醒：這份行程不會自動保存，重新整理或離開頁面就會消失，請記得先下載 PDF 或文字檔。</div><div class="meta" id="pdfnote">按下載後，手機會跳出確認視窗，按確認就會存成檔案。</div><div class="meta" id="dlmsg" aria-live="polite" style="margin-top:6px;color:#8a4b00"></div><textarea id="txtbox" readonly hidden rows="12" style="margin-top:8px"></textarea><div id="pgs"></div>';
   out.innerHTML=h;out.hidden=false;
+  if(INAPP)$('#pdfnote').textContent='在 LINE、IG 等 App 裡按下載，會改成顯示行程圖片或文字框，長按圖片或複製文字就能保存。';
   $('#back').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
   out.querySelectorAll('button.swp').forEach(b=>{b.onclick=()=>{const d=+b.dataset.d;openSwap(d+1,()=>{const res=swapDay(o,r,d);if(res.changed>0){const y=window.scrollY;r.days[d]=res.day;render(o,r,true);window.scrollTo(0,y)}return res})}});
   $('#dlp').onclick=async()=>{const t=$('#dlp'),old=t.textContent;t.textContent='製作中…';await new Promise(f=>setTimeout(f,30));try{const pg=drawPages(o,r);const ok=await download('旅遊行程_'+o.dest+'_'+o.days+'天.pdf',pdfFrom(pg));if(!ok&&!/取消/.test($('#dlmsg').textContent))showPages(pg)}finally{t.textContent=old}};

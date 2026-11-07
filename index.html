@@ -140,7 +140,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 </form>
 
 <section id="out" hidden aria-live="polite"></section>
-<footer>這裡的景點和吃的是我先挑好放進來的範例清單（台灣 22 個縣市，加上日本 6 個（東京、京都、大阪、沖繩、福岡、札幌）、韓國 3 個（首爾、釜山、濟州）、香港、澳門和曼谷，每個地點約 10–13 個景點、7–11 間吃的），不是即時資料，也不是即時搜尋。我只是依你填的條件，從清單裡挑出來再排順序。營業時間、價格、是否休息，出發前請自己再確認一次。</footer>
+<footer>這裡的景點和吃的是我先挑好放進來的範例清單（台灣 22 個縣市，加上日本 6 個（東京、京都、大阪、沖繩、福岡、札幌）、韓國 3 個（首爾、釜山、濟州）、香港、澳門和曼谷，每個地點約 10–13 個景點、11–15 間吃的），不是即時資料，也不是即時搜尋。我只是依你填的條件，從清單裡挑出來再排順序。營業時間、價格、是否休息，出發前請自己再確認一次。</footer>
 </main>
 
 <script>
@@ -1232,10 +1232,10 @@ async function download(name,data,type){
   }
   if(INAPP)return false;
   if(!c){
-    const u=URL.createObjectURL(b),a=document.createElement('a');
+    const u=URL.createObjectURL(/\.pdf$/i.test(name)?new Blob([b],{type:'application/octet-stream'}):b),a=document.createElement('a');
     a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(u),1000);
-    msg('已開始下載，請到瀏覽器的下載位置找檔案。');
+    msg('如果有跳出確認視窗，請按「下載」，才會開始存檔。');
     return true;
   }
   msg('這個畫面不支援直接存檔（可能是檔案預覽）。請改用瀏覽器（例如 Chrome、Safari）直接開啟這個檔案再試一次，或改按「下載成文字檔」。');

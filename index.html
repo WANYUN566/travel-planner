@@ -1095,17 +1095,20 @@ function plan(o){
   const zoneOf=a=>{const z=ZONES[o.dest]||[],i=z.findIndex(g=>g.includes(a));return i>=0?i:'a:'+a};
   const pickDay=dS=>{
     const free=sp.filter(x=>!uS.has(x));
-    if(free.length<2)return null;
+    if(free.length<1)return null;
+    const kidPref=kid||o.likes.includes('k');
+    const bigKid=x=>x.t.includes('k')&&x.h>=3;
     const g={};free.forEach(x=>{(g[zoneOf(x.a)]=g[zoneOf(x.a)]||[]).push(x)});
     let best=null;
     for(const k in g){
       const arr=g[k].sort((a,b)=>ss(b)-ss(a)).slice(0,ns);
-      const tier=arr.length>=ns?2:arr.length>=2?1:0;
+      let tier=arr.length>=ns?2:arr.length>=2?1:0;
+      if(kidPref&&arr.some(x=>x.t.includes('k')))tier=3;
       const v=arr.reduce((t,x)=>t+ss(x),0);
       if(!best||tier>best.tier||(tier===best.tier&&v>best.v))best={tier,v,arr};
     }
     const sel=[...best.arr];
-    if(sel.length<2){
+    if(sel.length<2&&!(kidPref&&bigKid(sel[0]))&&free.length>1){
       const rest=free.filter(x=>!sel.includes(x)).map(x=>[x,ss(x)+nearN(o.dest,x.a,sel[0].a)]).sort((a,b)=>b[1]-a[1]);
       sel.push(rest[0][0]);
     }
@@ -1120,13 +1123,13 @@ function plan(o){
     const mark=x=>({...x,kind:x.m==='m'?'用餐':'點心'});
     const day=p=>{const q=p.filter(x=>!NIGHT(x));return q.length?q:p};
     const lunch=mark(pick(day(food('m')),fs,s[0].a,uF,dF));
-    const snack=mark(pick(day(food('s')),fs,s[1].a,uF,dF));
+    const snack=mark(pick(day(food('s')),fs,(s[1]||s[0]).a,uF,dF));
     const nm=nightS.find(x=>!uS.has(x)&&zoneOf(x.a)===zoneOf(s[s.length-1].a));
     if(nm)uS.add(nm);
     const dinner=nm?{...nm,kind:'用餐',m:'m'}:mark(pick(food('m'),fs,s[s.length-1].a,uF,dF));
     const late=o.avoid.includes('late');
-    const tm=s.length===3?(late?['10:30','12:45','14:15','16:00','16:45','18:45']:['09:30','12:00','13:30','15:30','16:15','18:30']):(late?['11:00','13:00','14:30','16:45','18:45']:['10:00','12:15','14:00','16:30','18:30']);
-    const L=s.length===3?[s[0],lunch,s[1],snack,s[2],dinner]:[s[0],lunch,s[1],snack,dinner];
+    const tm=s.length===1?(late?['10:30','13:30','15:30','18:45']:['09:30','12:30','15:00','18:30']):s.length===3?(late?['10:30','12:45','14:15','16:00','16:45','18:45']:['09:30','12:00','13:30','15:30','16:15','18:30']):(late?['11:00','13:00','14:30','16:45','18:45']:['10:00','12:15','14:00','16:30','18:30']);
+    const L=s.length===3?[s[0],lunch,s[1],snack,s[2],dinner]:s.length===2?[s[0],lunch,s[1],snack,dinner]:[s[0],lunch,snack,dinner];
     days.push(L.map((x,i)=>({...x,time:tm[i]})));
   }
   if(reuse)warn.add('符合條件的內建項目不足，部分景點或餐廳會重複出現。');

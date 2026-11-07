@@ -1069,7 +1069,8 @@ function plan(o){
   const ss=x=>[...x.t].filter(c=>o.likes.includes(c)).length*3+(kid&&x.t.includes('k')?2:0)-Math.max(0,x.c-bud)*2;
   const fs=x=>(o.likes.includes(x.t)?3:0)+(o.avoid.includes('veg')&&x.v?5:0)-Math.max(0,x.c-bud)*2;
   const pick=(p,sc,near,used,day)=>{
-    let c=p.filter(x=>!used.has(x));
+    const ug=new Set([...used].map(u=>grp(u.n)));
+    let c=p.filter(x=>!used.has(x)&&!ug.has(grp(x.n)));
     if(!c.length){reuse=true;c=p.filter(x=>!day.has(x));if(!c.length)c=p}
     if(near){const same=c.filter(x=>x.a==='多處'||zoneOf(x.a)===zoneOf(near));if(same.length)c=same}
     c=c.map(x=>[x,sc(x)+(near?nearN(o.dest,x.a,near):0)]).sort((a,b)=>b[1]-a[1]);
@@ -1124,7 +1125,8 @@ function warns(o,r){
 const zoneIdx=(city,a)=>{const z=ZONES[city]||[],i=z.findIndex(g=>g.includes(a));return i>=0?i:'a:'+a};
 const FAR_SPOT='這個景點跟當天其他景點不在同一區，位置稍遠，出發前先確認怎麼過去。';
 function spotFar(city,day,x){const f=day.find(y=>y.kind==='景點');return x.kind==='景點'&&f&&f!==x&&zoneIdx(city,x.a)!==zoneIdx(city,f.a)}
-const NONSTORE={'彰化肉圓':['老担阿璋肉圓','阿三肉圓'],'鹿港蚵仔煎':[],'溪湖羊肉':[],'北斗肉圓':['肉圓瑞'],'彰化爌肉飯':['阿泉爌肉飯'],'彰化冰品':[]};
+const NONSTORE={'彰化肉圓':['老担阿璋肉圓','阿三肉圓'],'鹿港蚵仔煎':[],'溪湖羊肉':[],'北斗肉圓':['肉圓瑞'],'彰化爌肉飯':['阿泉爌肉飯'],'彰化冰品':[],'鹿港牛舌餅':[],'鹿港鳳眼糕':[],'鹿港麵線糊':[],'田尾咖啡廳':[]};
+const grp=n=>{for(const k in NONSTORE){if(k===n||NONSTORE[k].includes(n))return k}return n};
 const dispN=x=>x.n+(x.kind!=='景點'&&NONSTORE[x.n]?'（非店名）':'');
 const nsLine=x=>{const e=x.kind!=='景點'&&NONSTORE[x.n];return e?'當地多家可選'+(e.length?'，例如：'+e.join('、'):''):''};
 function linkTxt(x,last){
@@ -1309,7 +1311,7 @@ function swapDay(o,r,di){
     if(x.kind==='景點')return;
     let ref=x.a;for(let k=i-1;k>=0;k--){if(nd[k].kind==='景點'){ref=nd[k].a;break}}
     let c=F.map(y=>({n:y[0],a:y[1],m:y[2],t:y[3],c:y[4],sp:y[5],v:y[6],d:y[7]}))
-      .filter(y=>y.m===x.m&&y.c-bud<2&&(!av.includes('spicy')||!y.sp)&&!(av.includes('beef')&&NOBEEF.has(y.n))&&!(av.includes('sea')&&NOSEA.has(y.n))&&!(av.includes('raw')&&NORAW.has(y.n))&&(!av.includes('veg')||y.v)&&!other.has(y.n)&&!oldN.has(y.n)&&!used.has(y.n));
+      .filter(y=>y.m===x.m&&y.c-bud<2&&(!av.includes('spicy')||!y.sp)&&!(av.includes('beef')&&NOBEEF.has(y.n))&&!(av.includes('sea')&&NOSEA.has(y.n))&&!(av.includes('raw')&&NORAW.has(y.n))&&(!av.includes('veg')||y.v)&&!other.has(y.n)&&!oldN.has(y.n)&&!used.has(y.n)&&![...other,...used,...oldN].some(n=>grp(n)===grp(y.n)));
     if(c.length){
       c=c.map(y=>[y,fs(y)+nearN(o.dest,y.a,ref)]).sort((p,q)=>q[1]-p[1]);
       const pick=c[0][0];used.add(pick.n);

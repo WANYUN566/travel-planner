@@ -1065,24 +1065,26 @@ function plan(o){
   const pick=(p,sc,near,used,day)=>{
     let c=p.filter(x=>!used.has(x));
     if(!c.length){reuse=true;c=p.filter(x=>!day.has(x));if(!c.length)c=p}
+    if(near){const same=c.filter(x=>x.a==='多處'||zoneOf(x.a)===zoneOf(near));if(same.length)c=same}
     c=c.map(x=>[x,sc(x)+(near?nearN(o.dest,x.a,near):0)]).sort((a,b)=>b[1]-a[1]);
     used.add(c[0][0]);day.add(c[0][0]);return c[0][0]};
   const uS=new Set(),uF=new Set(),days=[];
   const zoneOf=a=>{const z=ZONES[o.dest]||[],i=z.findIndex(g=>g.includes(a));return i>=0?i:'a:'+a};
   const pickDay=dS=>{
     const free=sp.filter(x=>!uS.has(x));
-    if(free.length<ns)return null;
+    if(free.length<2)return null;
     const g={};free.forEach(x=>{(g[zoneOf(x.a)]=g[zoneOf(x.a)]||[]).push(x)});
     let best=null;
     for(const k in g){
       const arr=g[k].sort((a,b)=>ss(b)-ss(a)).slice(0,ns);
-      const v=arr.reduce((t,x)=>t+ss(x),0)-30*(ns-arr.length);
-      if(!best||v>best.v)best={v,arr};
+      const tier=arr.length>=ns?2:arr.length>=2?1:0;
+      const v=arr.reduce((t,x)=>t+ss(x),0);
+      if(!best||tier>best.tier||(tier===best.tier&&v>best.v))best={tier,v,arr};
     }
     const sel=[...best.arr];
-    if(sel.length<ns){
+    if(sel.length<2){
       const rest=free.filter(x=>!sel.includes(x)).map(x=>[x,ss(x)+nearN(o.dest,x.a,sel[0].a)]).sort((a,b)=>b[1]-a[1]);
-      while(sel.length<ns)sel.push(rest.shift()[0]);
+      sel.push(rest[0][0]);
     }
     sel.forEach(x=>{uS.add(x);dS.add(x)});
     return sel;
@@ -1095,10 +1097,10 @@ function plan(o){
     const mark=x=>({...x,kind:x.m==='m'?'用餐':'點心'});
     const lunch=mark(pick(food('m'),fs,s[0].a,uF,dF));
     const snack=mark(pick(food('s'),fs,s[1].a,uF,dF));
-    const dinner=mark(pick(food('m'),fs,s[ns-1].a,uF,dF));
+    const dinner=mark(pick(food('m'),fs,s[s.length-1].a,uF,dF));
     const late=o.avoid.includes('late');
-    const tm=ns===3?(late?['10:30','12:45','14:15','16:00','16:45','18:45']:['09:30','12:00','13:30','15:30','16:15','18:30']):(late?['11:00','13:00','14:30','16:45','18:45']:['10:00','12:15','14:00','16:30','18:30']);
-    const L=ns===3?[s[0],lunch,s[1],snack,s[2],dinner]:[s[0],lunch,s[1],snack,dinner];
+    const tm=s.length===3?(late?['10:30','12:45','14:15','16:00','16:45','18:45']:['09:30','12:00','13:30','15:30','16:15','18:30']):(late?['11:00','13:00','14:30','16:45','18:45']:['10:00','12:15','14:00','16:30','18:30']);
+    const L=s.length===3?[s[0],lunch,s[1],snack,s[2],dinner]:[s[0],lunch,s[1],snack,dinner];
     days.push(L.map((x,i)=>({...x,time:tm[i]})));
   }
   if(reuse)warn.add('符合條件的內建項目不足，部分景點或餐廳會重複出現。');
@@ -1113,6 +1115,9 @@ function warns(o,r){
   if(o.bud===1&&r.days.some(d=>d.some(x=>x.c>=2)))a.push('這份行程含較高花費的項目，請自行評估預算。');
   return a;
 }
+const zoneIdx=(city,a)=>{const z=ZONES[city]||[],i=z.findIndex(g=>g.includes(a));return i>=0?i:'a:'+a};
+const FAR_SPOT='這個景點跟當天其他景點不在同一區，位置稍遠，出發前先確認怎麼過去。';
+function spotFar(city,day,x){const f=day.find(y=>y.kind==='景點');return x.kind==='景點'&&f&&f!==x&&zoneIdx(city,x.a)!==zoneIdx(city,f.a)}
 function linkTxt(x,last){
   return x.a==='多處'?'各區都有分店，挑逛完「'+last.n+'」後離你最近的一間。'
     :x.a===last.a?'逛完「'+last.n+'」就在附近，直接過去吃。'
@@ -1135,6 +1140,7 @@ function toText(o,r){
       L.push('       '+$m(x)+(e?'':'｜約 '+x.h+' 小時'));
       L.push('       '+x.d);
       if(e&&last)L.push('       '+linkTxt(x,last));
+      if(spotFar(o.dest,d,x))L.push('       '+FAR_SPOT);
     });
     L.push('');
   });
@@ -1187,6 +1193,7 @@ function drawPagesK(o,r,K){
       para(x.a+'｜'+$m(x)+(e?'':'｜約 '+x.h+' 小時'),24,'#6f655b',0,M+140,0);
       para(x.d,26,'#3a332c',0,M+140,0);
       if(e&&last)para(linkTxt(x,last),24,'#8a4b00',0,M+140,0);
+      if(spotFar(o.dest,d,x))para(FAR_SPOT,24,'#8a4b00',0,M+140,0);
       y+=Math.round(22*K);
     });
   });
@@ -1356,6 +1363,7 @@ function render(o,r,keep){
           :'接在「'+last.n+'」之後，位置稍遠，出發前先確認怎麼過去。';
         link='<div class="link">'+esc(t)+'</div>';
       }
+      if(spotFar(o.dest,d,x))link='<div class="link">'+esc(FAR_SPOT)+'</div>';
       h+='<div class="it"><div class="tm">'+x.time+'</div><div><div><span class="tag'+(e?' e':'')+(lab==='午餐'?' lu':lab==='點心'?' sn':lab==='晚餐'?' di':'')+'">'+lab+'</span><span class="nm">'+esc(x.n)+'</span></div>'
         +'<div class="meta">'+esc(x.a)+'｜'+$m(x)+(e?'':'｜<span style="white-space:nowrap">約 '+x.h+' 小時</span>')+'</div><div class="note">'+esc(x.d)+'</div>'+link+'</div></div>';
     });

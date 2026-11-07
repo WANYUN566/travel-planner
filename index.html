@@ -1360,7 +1360,7 @@ function render(o,r,keep){
     });
     h+='</div>';
   });
-  h+='<button class="ghost" type="button" id="dlp">下載成 PDF</button> <button class="ghost" type="button" id="dl">下載成文字檔</button> <button class="ghost" type="button" id="back">回到上方改條件，再挑一次</button><div class="warn" style="margin-top:10px;font-size:18px;font-weight:600">提醒：這份行程不會自動保存，重新整理或離開頁面就會消失，請記得先下載 PDF 或文字檔。</div><div class="meta" id="pdfnote">按下載後，手機會跳出確認視窗，按確認就會存成檔案。</div><div class="meta" id="dlmsg" aria-live="polite" style="margin-top:6px;color:#8a4b00"></div><textarea id="txtbox" readonly hidden rows="12" style="margin-top:8px"></textarea><div id="pgs"></div>';
+  h+='<button class="ghost" type="button" id="dlp">下載成 PDF</button> <button class="ghost" type="button" id="dl">下載成文字檔</button> <button class="ghost" type="button" id="back">回到上方改條件，再挑一次</button><div class="warn" style="margin-top:10px;font-size:18px;font-weight:600">提醒：這份行程不會自動保存，重新整理或離開頁面就會消失，請記得先下載 PDF 或文字檔。</div><div class="meta" id="pdfnote">按下載後，手機會跳出確認視窗，按「下載」就會存成檔案。</div><div class="meta" id="dlmsg" aria-live="polite" style="margin-top:6px;color:#8a4b00"></div><textarea id="txtbox" readonly hidden rows="12" style="margin-top:8px"></textarea><div id="pgs"></div>';
   out.innerHTML=h;out.hidden=false;
   if(INAPP)$('#pdfnote').textContent='在 LINE、IG 等 App 裡按下載，會改成顯示行程圖片或文字框，長按圖片或複製文字就能保存。';
   $('#back').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});

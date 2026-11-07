@@ -480,9 +480,9 @@ F:[
 ["太陽餅", "中區", "s", "f", 1, 0, 1, "台中經典伴手禮"],
 ["忠孝夜市小吃", "東區", "m", "f", 1, 0, 0, "在地人常逛"],
 ["梧棲海產店", "梧棲區", "m", "r", 2, 0, 0, "漁港海鮮"],
-["台中鍋物（多處）", "多處", "m", "r", 2, 0, 0, "火鍋店選擇多"],
+["台中鍋物", "多處", "m", "r", 2, 0, 0, "火鍋店選擇多"],
 ["一中街冰品", "北區", "s", "c", 1, 0, 1, "逛街消暑"],
-["台中拉麵（多處）", "多處", "m", "r", 1, 0, 0, "選擇多"]]},
+["台中拉麵", "多處", "m", "r", 1, 0, 0, "選擇多"]]},
 彰化縣:{S:[
 ["鹿港老街", "鹿港鎮", "hs", 1, 2, 1, 1, "紅磚老街，小吃與古蹟集中"],
 ["鹿港天后宮", "鹿港鎮", "h", 1, 1, 1, 1, "歷史悠久的廟宇"],
@@ -1020,7 +1020,7 @@ const ZONES={
 新竹市:[['東區','北區','香山區']],
 新竹縣:[['北埔鄉','峨眉鄉','橫山鄉','竹東鎮'],['關西鎮','新埔鎮']],
 苗栗縣:[['南庄鄉','頭份市'],['苗栗市','公館鄉','大湖鄉'],['三義鄉','西湖鄉'],['通霄鎮','苑裡鎮']],
-台中市:[['中區','西區','北區','南屯區','西屯區','北屯區','東區'],['清水區','梧棲區']],
+台中市:[['中區','西區','北區','東區'],['西屯區','南屯區'],['北屯區'],['清水區','梧棲區']],
 彰化縣:[['鹿港鎮','芳苑鄉'],['彰化市'],['溪湖鎮','員林市','田尾鄉','北斗鎮']],
 南投縣:[['魚池鄉','埔里鎮'],['水里鄉','集集鎮'],['鹿谷鄉'],['南投市'],['仁愛鄉']],
 雲林縣:[['北港鎮','口湖鄉'],['斗六市','古坑鄉'],['虎尾鎮','西螺鎮']],
@@ -1105,8 +1105,9 @@ function plan(o){
     let s=pickDay(dS);
     if(!s){s=[];s.push(pick(sp,ss,null,uS,dS));for(let i=1;i<ns;i++)s.push(pick(sp,ss,s[0].a,uS,dS))}
     const mark=x=>({...x,kind:x.m==='m'?'用餐':'點心'});
-    const lunch=mark(pick(food('m'),fs,s[0].a,uF,dF));
-    const snack=mark(pick(food('s'),fs,s[1].a,uF,dF));
+    const day=p=>{const q=p.filter(x=>!NIGHT(x));return q.length?q:p};
+    const lunch=mark(pick(day(food('m')),fs,s[0].a,uF,dF));
+    const snack=mark(pick(day(food('s')),fs,s[1].a,uF,dF));
     const dinner=mark(pick(food('m'),fs,s[s.length-1].a,uF,dF));
     const late=o.avoid.includes('late');
     const tm=s.length===3?(late?['10:30','12:45','14:15','16:00','16:45','18:45']:['09:30','12:00','13:30','15:30','16:15','18:30']):(late?['11:00','13:00','14:30','16:45','18:45']:['10:00','12:15','14:00','16:30','18:30']);
@@ -1125,6 +1126,7 @@ function warns(o,r){
   if(o.bud===1&&r.days.some(d=>d.some(x=>x.c>=2)))a.push('這份行程含較高花費的項目，請自行評估預算。');
   return a;
 }
+const NIGHT=x=>/夜市/.test(x.n);
 const zoneIdx=(city,a)=>{const z=ZONES[city]||[],i=z.findIndex(g=>g.includes(a));return i>=0?i:'a:'+a};
 const FAR_SPOT='這個景點跟當天其他景點不在同一區，位置稍遠，出發前先確認怎麼過去。';
 function spotFar(city,day,x){const f=day.find(y=>y.kind==='景點');return x.kind==='景點'&&f&&f!==x&&zoneIdx(city,x.a)!==zoneIdx(city,f.a)}
@@ -1314,7 +1316,7 @@ function swapDay(o,r,di){
     if(x.kind==='景點')return;
     let ref=x.a;for(let k=i-1;k>=0;k--){if(nd[k].kind==='景點'){ref=nd[k].a;break}}
     let c=F.map(y=>({n:y[0],a:y[1],m:y[2],t:y[3],c:y[4],sp:y[5],v:y[6],d:y[7]}))
-      .filter(y=>y.m===x.m&&y.c-bud<2&&(!av.includes('spicy')||!y.sp)&&!(av.includes('beef')&&NOBEEF.has(y.n))&&!(av.includes('sea')&&NOSEA.has(y.n))&&!(av.includes('raw')&&NORAW.has(y.n))&&(!av.includes('veg')||y.v)&&!other.has(y.n)&&!oldN.has(y.n)&&!used.has(y.n)&&![...other,...used,...oldN].some(n=>grp(n)===grp(y.n)));
+      .filter(y=>y.m===x.m&&y.c-bud<2&&(!av.includes('spicy')||!y.sp)&&!(av.includes('beef')&&NOBEEF.has(y.n))&&!(av.includes('sea')&&NOSEA.has(y.n))&&!(av.includes('raw')&&NORAW.has(y.n))&&(!av.includes('veg')||y.v)&&!(x.time<'18:00'&&NIGHT(y))&&!other.has(y.n)&&!oldN.has(y.n)&&!used.has(y.n)&&![...other,...used,...oldN].some(n=>grp(n)===grp(y.n)));
     if(c.length){
       c=c.map(y=>[y,fs(y)+nearN(o.dest,y.a,ref)]).sort((p,q)=>q[1]-p[1]);
       const pick=c[0][0];used.add(pick.n);

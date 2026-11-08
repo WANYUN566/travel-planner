@@ -1179,6 +1179,8 @@ function linkTxt(x,last){
     :x.a===last.a?'逛完「'+last.n+'」就在附近，直接過去吃。'
     :'接在「'+last.n+'」之後，位置稍遠，出發前先確認怎麼過去。';
 }
+const placeQ=(o,x)=>o.dest+' '+x.n.replace(/（[^）]*）$/,'')+(x.a&&x.a!=='多處'?' '+x.a:'');
+const mapLink=(o,a,b)=>'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(placeQ(o,a))+'&destination='+encodeURIComponent(placeQ(o,b))+'&travelmode=transit';
 function toText(o,r){
   const L=['旅遊行程｜'+o.dest+' '+o.days+' 天',
     WHO[o.who]+'，共 '+o.ppl+' 人｜'+TR[o.trans]+'｜預算：'+BT[o.dest][o.bud-1]];
@@ -1187,7 +1189,7 @@ function toText(o,r){
   L.push('※ 這是依需求挑的建議／示範行程，內容來自內建範例清單，沒有計算實際交通時間或營業時間，出發前請自行確認。','※ 每人金額僅供參考，出發前請自行確認。','');
   r.days.forEach((d,i)=>{
     L.push('【第 '+(i+1)+' 天】');
-    let last=null;
+    let last=null,prev=null;
     d.forEach(x=>{
       const e=x.kind!=='景點';
       if(!e)last=x;
@@ -1198,6 +1200,8 @@ function toText(o,r){
       if(nsLine(x))L.push('       '+nsLine(x));
       if(e&&last)L.push('       '+linkTxt(x,last));
       if(spotFar(o.dest,d,x))L.push('       '+FAR_SPOT);
+      if(o.trans==='transit'&&prev&&x.a!=='多處')L.push('       🚃 怎麼去：'+mapLink(o,prev,x));
+      prev=x;
     });
     L.push('');
   });
@@ -1427,7 +1431,7 @@ function render(o,r,keep){
     });
     h+='</div>';
   });
-  h+='<button class="ghost" type="button" id="dlp">下載成 PDF</button> <button class="ghost" type="button" id="dl">下載成文字檔</button> <button class="ghost" type="button" id="back">回到上方改條件，再挑一次</button><div class="warn" style="margin-top:10px;font-size:18px;font-weight:600">提醒：這份行程不會自動保存，重新整理或離開頁面就會消失，請記得先下載 PDF 或文字檔。</div><div class="meta" id="pdfnote">按下載後，手機會跳出確認視窗，按「下載」就會存成檔案。</div><div class="meta" id="dlmsg" aria-live="polite" style="margin-top:6px;color:#8a4b00"></div><textarea id="txtbox" readonly hidden rows="12" style="margin-top:8px"></textarea><div id="pgs"></div>';
+  h+='<button class="ghost" type="button" id="dlp">下載成 PDF</button> <button class="ghost" type="button" id="dl">下載成文字檔</button> <button class="ghost" type="button" id="back">回到上方改條件，再挑一次</button><div class="warn" style="margin-top:10px;font-size:18px;font-weight:600">提醒：這份行程不會自動保存，重新整理或離開頁面就會消失，請記得先下載 PDF 或文字檔。</div>'+(o.trans==='transit'?'<div class="meta" style="margin-top:10px">可以下載文字檔，點連結查看如何搭車。</div>':'')+'<div class="meta" id="pdfnote">按下載後，手機會跳出確認視窗，按「下載」就會存成檔案。</div><div class="meta" id="dlmsg" aria-live="polite" style="margin-top:6px;color:#8a4b00"></div><textarea id="txtbox" readonly hidden rows="12" style="margin-top:8px"></textarea><div id="pgs"></div>';
   out.innerHTML=h;out.hidden=false;
   if(INAPP)$('#pdfnote').textContent='在 LINE、IG 等 App 裡按下載，會改成顯示行程圖片或文字框，長按圖片或複製文字就能保存。';
   $('#back').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});

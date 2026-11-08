@@ -1180,7 +1180,8 @@ function linkTxt(x,last){
     :'接在「'+last.n+'」之後，位置稍遠，出發前先確認怎麼過去。';
 }
 const placeQ=(o,x)=>o.dest+' '+x.n.replace(/（[^）]*）$/,'')+(x.a&&x.a!=='多處'?' '+x.a:'');
-const mapLink=(o,a,b)=>'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(placeQ(o,a))+'&destination='+encodeURIComponent(placeQ(o,b))+'&travelmode=transit';
+const mapSeg=q=>q.replace(/[\/?#&%]/g,' ').trim().replace(/\s+/g,'+');
+const mapLink=(o,a,b)=>'https://www.google.com/maps/dir/'+mapSeg(placeQ(o,a))+'/'+mapSeg(placeQ(o,b))+'/';
 function toText(o,r){
   const L=['旅遊行程｜'+o.dest+' '+o.days+' 天',
     WHO[o.who]+'，共 '+o.ppl+' 人｜'+TR[o.trans]+'｜預算：'+BT[o.dest][o.bud-1]];
@@ -1200,7 +1201,7 @@ function toText(o,r){
       if(nsLine(x))L.push('       '+nsLine(x));
       if(e&&last)L.push('       '+linkTxt(x,last));
       if(spotFar(o.dest,d,x))L.push('       '+FAR_SPOT);
-      if(o.trans==='transit'&&prev&&x.a!=='多處')L.push('       🚃 怎麼去：'+mapLink(o,prev,x));
+      if(o.trans==='transit'&&prev&&x.a!=='多處'){L.push('       🚃 怎麼去（點下面的連結，打開後切換成大眾運輸）：');L.push('       '+mapLink(o,prev,x));}
       prev=x;
     });
     L.push('');

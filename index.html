@@ -729,7 +729,7 @@ F:[
 ["二崁聚落", "西嶼鄉", "h", 1, 1.5, 1, 1, "保存完整的傳統聚落"],
 ["馬公老街", "馬公市", "hs", 1, 1.5, 1, 1, "老街與小店，吃吃逛逛"],
 ["澎湖天后宮", "馬公市", "h", 1, 1, 1, 1, "台灣最古老的媽祖廟之一"],
-["吉貝島", "白沙鄉", "n", 1, 4, 1, 2, "需搭船，適合玩水和海灘活動"],
+["吉貝島", "吉貝", "n", 1, 4, 1, 2, "需搭船，適合玩水和海灘活動"],
 ["澎湖水族館", "白沙鄉", "k", 2, 2, 1, 1, "認識澎湖海洋生物"],
 ["風櫃洞", "馬公市", "n", 1, 1, 1, 1, "海浪拍岩的景觀"],
 ["北寮奎壁山", "白沙鄉", "n", 1, 1.5, 1, 1, "退潮時有海上步道"],
@@ -750,7 +750,12 @@ F:[
 ["馬公在地麵食", "馬公市", "m", "f", 1, 0, 0, "在地麵食"],
 ["馬公滷肉飯", "馬公市", "m", "f", 1, 0, 0, "平價家常飯"],
 ["馬公中式簡餐", "馬公市", "m", "r", 1, 0, 0, "選擇多"],
-["馬公便當", "馬公市", "m", "f", 1, 0, 0, "平價方便"]]},
+["馬公便當", "馬公市", "m", "f", 1, 0, 0, "平價方便"],
+["明發小吃部", "白沙鄉", "m", "f", 1, 0, 0, "赤崁漁村老店，招牌加志魚麵，早上7點就開"],
+["漁村川菜活海鮮", "西嶼鄉", "m", "r", 2, 0, 0, "外垵港活海鮮熱炒，只收現金"],
+["美東芳牛肉麵", "白沙鄉", "m", "f", 1, 0, 0, "港子村牛肉麵名店，週二、三晚上公休，賣完會提早收"],
+["西嶼大池排骨麵", "西嶼鄉", "m", "f", 1, 0, 0, "大池村私宅排骨麵，只賣中午，多半只能外帶"],
+["外垵刈包（福氣早餐店）", "西嶼鄉", "s", "f", 1, 0, 0, "黑糖饅頭夾爌肉，週一、三公休，只能外帶"]]},
 金門縣:{S:[
 ["翟山坑道", "金湖鎮", "h", 1, 1.5, 1, 1, "海邊的軍事坑道"],
 ["水頭聚落", "金城鎮", "h", 1, 2, 1, 1, "閩南風格的傳統聚落"],
@@ -1062,7 +1067,7 @@ const ZONES={
 宜蘭縣:[['宜蘭市','礁溪鄉','頭城鎮'],['羅東鎮','五結鄉','冬山鄉','蘇澳鎮'],['大同鄉']],
 花蓮縣:[['花蓮市','吉安鄉'],['新城鄉','秀林鄉'],['壽豐鄉'],['瑞穗鄉','萬榮鄉'],['豐濱鄉']],
 台東縣:[['台東市','卑南鄉'],['成功鎮','東河鄉'],['池上鄉','鹿野鄉']],
-澎湖縣:[['馬公市'],['白沙鄉','西嶼鄉'],['七美鄉']],
+澎湖縣:[['馬公市'],['白沙鄉','西嶼鄉'],['吉貝'],['七美鄉']],
 金門縣:[['金城鎮','金湖鎮','金寧鄉','金沙鎮']],
 連江縣:[['南竿鄉'],['北竿鄉'],['東引鄉'],['莒光鄉']],
 沖繩:[['那霸','豐見城市'],['南城市'],['北谷','讀谷村','恩納村'],['本部町','今歸仁'],['金武町']],
@@ -1082,7 +1087,9 @@ function nearN(city,a,b){
 }
 ['澳門魚蛋粉'].forEach(n=>NOSEA.add(n));
 ['禾火食堂','味擂家（士林店）'].forEach(n=>{NOBEEF.add(n);NOSEA.add(n)});
-NOBEEF.add('阿財牛肉湯');
+NOBEEF.add('阿財牛肉湯');NOBEEF.add('美東芳牛肉麵');
+['明發小吃部','漁村川菜活海鮮'].forEach(n=>NOSEA.add(n));
+const LUNCH=new Set(['西嶼大池排骨麵']);
 ['周氏蝦捲','陳家蚵捲','土城海產店','海鮮料理濱之家（浜の家）','古宇利島蝦蝦飯（Shrimp Wagon）','中本鮮魚天婦羅店（中本鮮魚てんぷら店）'].forEach(n=>NOSEA.add(n));
 const NOCAR=new Set(['東京','香港','澳門','曼谷']);
 const REMOTE=new Set(['沖繩','濟州','新竹縣','苗栗縣','南投縣','雲林縣','嘉義縣','屏東縣','宜蘭縣','花蓮縣','台東縣','澎湖縣','金門縣','連江縣']);
@@ -1119,18 +1126,19 @@ function plan(o){
     const free=sp.filter(x=>!uS.has(x));
     if(free.length<1)return null;
     const kidPref=kid||o.likes.includes('k');
-    const bigKid=x=>x.t.includes('k')&&x.h>=3;
+    const big=x=>x.h>=3;
     const g={};free.forEach(x=>{(g[zoneOf(x.a)]=g[zoneOf(x.a)]||[]).push(x)});
     let best=null;
     for(const k in g){
       const arr=g[k].sort((a,b)=>ss(b)-ss(a)).slice(0,ns);
       let tier=arr.length>=ns?2:arr.length>=2?1:0;
+      if(g[k].length===1&&big(arr[0]))tier=1;
       if(kidPref&&arr.some(x=>x.t.includes('k')))tier=3;
       const v=arr.reduce((t,x)=>t+ss(x),0);
       if(!best||tier>best.tier||(tier===best.tier&&v>best.v))best={tier,v,arr};
     }
     const sel=[...best.arr];
-    if(sel.length<2&&!(kidPref&&bigKid(sel[0]))&&free.length>1){
+    if(sel.length<2&&!big(sel[0])&&free.length>1){
       const rest=free.filter(x=>!sel.includes(x)).map(x=>[x,ss(x)+nearN(o.dest,x.a,sel[0].a)]).sort((a,b)=>b[1]-a[1]);
       sel.push(rest[0][0]);
     }
@@ -1148,7 +1156,8 @@ function plan(o){
     const snack=mark(pick(day(food('s')),fs,(s[1]||s[0]).a,uF,dF));
     const nm=nightS.find(x=>!uS.has(x)&&zoneOf(x.a)===zoneOf(s[s.length-1].a));
     if(nm)uS.add(nm);
-    const dinner=nm?{...nm,kind:'用餐',m:'m'}:mark(pick(food('m'),fs,s[s.length-1].a,uF,dF));
+    const eve=p=>{const q=p.filter(x=>!LUNCH.has(x.n));return q.length?q:p};
+    const dinner=nm?{...nm,kind:'用餐',m:'m'}:mark(pick(eve(food('m')),fs,s[s.length-1].a,uF,dF));
     const late=o.avoid.includes('late');
     const tm=s.length===1?(late?['10:30','13:30','15:30','18:45']:['09:30','12:30','15:00','18:30']):s.length===3?(late?['10:30','12:45','14:15','16:00','16:45','18:45']:['09:30','12:00','13:30','15:30','16:15','18:30']):(late?['11:00','13:00','14:30','16:45','18:45']:['10:00','12:15','14:00','16:30','18:30']);
     const L=s.length===3?[s[0],lunch,s[1],snack,s[2],dinner]:s.length===2?[s[0],lunch,s[1],snack,dinner]:[s[0],lunch,snack,dinner];
@@ -1347,6 +1356,7 @@ function swapDay(o,r,di){
   let pool=S.map(x=>({n:x[0],a:x[1],t:x[2],c:x[3],h:x[4],k:x[5],w:x[6],d:x[7],kind:'景點'}))
     .filter(x=>x.c-bud<2&&(!kid||x.k)&&(!less||x.w<3)&&!other.has(x.n)&&!NIGHT(x));
   slots.forEach(i=>{if(!pool.some(x=>x.n===old[i].n))pool.push(old[i])});
+  if(ns===1)pool=pool.filter(x=>x.h>=3);
   if(ns>0&&pool.length>=ns){
     let best=null;
     const walk=(start,cur)=>{
@@ -1372,7 +1382,7 @@ function swapDay(o,r,di){
     if(x.kind==='景點')return;
     let ref=x.a;for(let k=i-1;k>=0;k--){if(nd[k].kind==='景點'){ref=nd[k].a;break}}
     let c=F.map(y=>({n:y[0],a:y[1],m:y[2],t:y[3],c:y[4],sp:y[5],v:y[6],d:y[7]}))
-      .filter(y=>y.m===x.m&&y.c-bud<2&&(!av.includes('spicy')||!y.sp)&&!(av.includes('beef')&&NOBEEF.has(y.n))&&!(av.includes('sea')&&NOSEA.has(y.n))&&!(av.includes('raw')&&NORAW.has(y.n))&&(!av.includes('veg')||y.v)&&!(x.time<'18:00'&&NIGHT(y))&&!other.has(y.n)&&!oldN.has(y.n)&&!used.has(y.n)&&![...other,...used,...oldN].some(n=>grp(n)===grp(y.n)));
+      .filter(y=>y.m===x.m&&y.c-bud<2&&(!av.includes('spicy')||!y.sp)&&!(av.includes('beef')&&NOBEEF.has(y.n))&&!(av.includes('sea')&&NOSEA.has(y.n))&&!(av.includes('raw')&&NORAW.has(y.n))&&(!av.includes('veg')||y.v)&&!(x.time<'18:00'&&NIGHT(y))&&!(x.time>='15:00'&&LUNCH.has(y.n))&&!other.has(y.n)&&!oldN.has(y.n)&&!used.has(y.n)&&![...other,...used,...oldN].some(n=>grp(n)===grp(y.n)));
     if(c.length){
       c=c.map(y=>[y,fs(y)+nearN(o.dest,y.a,ref)]).sort((p,q)=>q[1]-p[1]);
       const pick=c[0][0];used.add(pick.n);

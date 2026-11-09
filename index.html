@@ -125,15 +125,49 @@ form,.day{box-shadow:0 6px 24px rgba(135,75,85,.12)}
 .link{color:#7A3E33}
 </style>
 <style id="warn-color">.warn{color:#A80C24!important}.sum .warn{font-weight:600}</style>
-</head>
+<style id="form-polish">
+/* 統一字級與間距 */
+:root{--r-lg:18px;--r-md:12px;--sp:14px}
+body{font-size:16px;line-height:1.8}
+main{padding:30px 20px 56px}
+h1{font-size:28px;font-weight:700;letter-spacing:.06em;margin:0 0 10px}
+.lead{font-size:15px;margin:0 0 20px}
+/* 表單卡片 */
+#f{border-radius:var(--r-lg);padding:20px 18px;border:1px solid var(--line);box-shadow:0 10px 30px rgba(135,75,85,.10)}
+#f .intro{background:var(--soft);border-radius:var(--r-md);padding:12px 14px;margin:0 0 16px}
+#f .intro p{margin:0}
+#f .intro p+p{margin-top:4px}
+/* 分組小卡 */
+#f .grp{background:#FFF9F8;border:1px solid #EFD9D6;border-radius:var(--r-md);padding:14px 14px 2px;margin:0 0 12px}
+#f .grp-t{font-size:13px;letter-spacing:.12em;color:var(--sub);margin:0 0 8px;display:flex;align-items:center;gap:8px}
+#f .grp-t::before{content:"";width:18px;height:2px;background:var(--main);border-radius:2px}
+/* 欄位 */
+#f fieldset{margin:0 0 var(--sp)}
+#f label.t,#f legend{font-size:15px;font-weight:600;margin:0 0 6px}
+#f select,#f input[type=number],#f textarea{border-radius:var(--r-md);padding:10px 12px;min-height:44px;font-size:16px;border-color:var(--line)}
+#f select:focus-visible,#f input:focus-visible,#f textarea:focus-visible{outline:2px solid var(--main);outline-offset:1px}
+#f .row{gap:12px}
+#f .meta{font-size:13px;line-height:1.6;margin-top:4px}
+#f .chk{gap:8px}
+#f .chk label{border-radius:999px;padding:6px 14px;font-size:15px}
+#f button[type=submit]{border-radius:999px;padding:15px 20px;font-size:17px;letter-spacing:.1em;margin-top:6px;box-shadow:0 6px 16px rgba(135,75,85,.22)}
+@media(max-width:520px){
+ main{padding:22px 16px 48px}
+ h1{font-size:24px}
+ #f{padding:16px 12px}
+ #f .grp{padding:12px 12px 0}
+ #f .row{gap:0}
+ #f .chk label{padding:6px 12px;font-size:14px}
+}
+</style></head>
 <body>
 <main>
 <h1>旅遊行程規劃助手</h1>
 <p class="lead">不用自己查一堆。填好需求，我幫你把要逛的景點和想吃的東西一起挑好，排成每天的行程。</p>
 
 <form id="f">
-<p class="meta" style="margin:0 0 4px"><strong>先告訴我這趟旅行想怎麼玩，我再幫你整理行程。</strong></p>
-<p class="meta" style="margin:0 0 16px">只需選擇旅遊地點與天數，即可開始規劃行程！其他項目可依需求自由填寫。</p>
+<div class="intro"><p class="meta"><strong>先告訴我這趟旅行想怎麼玩，我再幫你整理行程。</strong></p><p class="meta">只需選擇旅遊地點與天數，即可開始規劃行程！其他項目可依需求自由填寫。</p></div>
+<div class="grp"><p class="grp-t">基本資料</p>
 <div class="row">
 <fieldset><label class="t" for="dest">旅遊地點</label>
 <select id="dest"><optgroup label="台灣"><option>台北市</option><option>新北市</option><option>基隆市</option><option>桃園市</option><option>新竹市</option><option>新竹縣</option><option>苗栗縣</option><option>台中市</option><option>彰化縣</option><option>南投縣</option><option>雲林縣</option><option>嘉義市</option><option>嘉義縣</option><option>台南市</option><option>高雄市</option><option>屏東縣</option><option>宜蘭縣</option><option>花蓮縣</option><option>台東縣</option><option>澎湖縣</option><option>金門縣</option><option>連江縣</option></optgroup><optgroup label="日本"><option>東京</option><option>京都</option><option>大阪</option><option>沖繩</option><option>福岡</option><option>札幌</option></optgroup><optgroup label="港澳、泰國"><option>香港</option><option>澳門</option><option>曼谷</option></optgroup><optgroup label="韓國"><option>首爾</option><option>釜山</option><option>濟州</option></optgroup></select></fieldset>
@@ -146,6 +180,8 @@ form,.day{box-shadow:0 6px 24px rgba(135,75,85,.12)}
 <fieldset><label class="t" for="ppl">人數</label>
 <input type="number" id="ppl" min="1" max="20" value="1"></fieldset>
 </div>
+</div>
+<div class="grp"><p class="grp-t">交通與預算</p>
 <div class="row">
 <fieldset><label class="t" for="trans">交通方式</label>
 <select id="trans"><option value="transit">大眾運輸</option><option value="car">自駕／租車</option><option value="walk">以步行為主</option></select></fieldset>
@@ -153,6 +189,8 @@ form,.day{box-shadow:0 6px 24px rgba(135,75,85,.12)}
 <select id="bud"><option value="1">經濟</option><option value="2" selected>適中</option><option value="3">寬鬆</option></select>
 <div class="meta">金額含餐飲與門票，不含住宿與交通，僅為大致參考。</div></fieldset>
 </div>
+</div>
+<div class="grp"><p class="grp-t">喜好與需求</p>
 <fieldset><legend>喜歡的活動或美食（可複選）</legend>
 <div class="chk" id="likes">
 <label><input type="checkbox" value="h">歷史文化</label>
@@ -176,6 +214,7 @@ form,.day{box-shadow:0 6px 24px rgba(135,75,85,.12)}
 <fieldset><label class="t" for="note">其他提醒（選填）</label>
 <textarea id="note" rows="2" placeholder="例如：記得帶護照、下午想留點休息時間"></textarea>
 <div class="meta">這裡的內容會顯示在行程上方提醒你，不會影響行程安排。</div></fieldset>
+</div>
 <button type="submit">幫我挑行程</button>
 </form>
 

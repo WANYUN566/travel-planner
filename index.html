@@ -32,6 +32,11 @@ button.ghost:hover{background:var(--soft)}
 button.swp{width:auto;margin:0;padding:8px 14px;min-height:40px;font-size:14px;background:none;color:var(--main);border:1px solid var(--main)}
 button.swp:hover{background:var(--soft)}
 .dbtn{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.cform{margin:0 0 12px;padding:14px;border:1px dashed var(--line);border-radius:10px;background:#fff}
+.cform input[type=text]{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+.cform .mb{background:none;padding:0;max-width:none;max-height:none;overflow:visible}
+.tag.cu{background:#85677d}
+.it.cus{background:#faf5fb}
 .rtback{font-size:13px;margin-left:8px}
 .dh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .day .dh h3{margin:0}
@@ -1200,7 +1205,11 @@ const placeQ=(o,x)=>o.dest+' '+x.n.replace(/（[^）]*）$/,'')+(x.a&&x.a!=='多
 const placeLink=(o,x)=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(placeQ(o,x));
 const mapSeg=q=>q.replace(/[\/?#&%]/g,' ').trim().replace(/\s+/g,'+');
 const mapLink=(o,a,b)=>'https://www.google.com/maps/dir/'+mapSeg(placeQ(o,a))+'/'+mapSeg(placeQ(o,b))+'/';
+const CUS_NOTE='自己加的行程，請自行判斷時間和交通安排是否可行。';
+const withCus=r=>r&&r.cus?{...r,days:r.days.map((d,i)=>[...d,...(r.cus[i]||[])].sort((a,b)=>a.time<b.time?-1:a.time>b.time?1:(a.custom?1:-1)))}:r;
+const TIMES=(()=>{const t=[];for(let m=8*60;m<=21*60;m+=30)t.push(String(Math.floor(m/60)).padStart(2,'0')+':'+(m%60?'30':'00'));return t})();
 function routeHTML(o,r){
+  r=withCus(r);
   let h='<div style="margin-top:14px"><button class="ghost" type="button" id="rtb" aria-expanded="false" aria-controls="rtv">🚃 查看怎麼去（Google 地圖）</button><div id="rtv" hidden style="margin-top:10px"><p class="meta">點「打開地圖」會另開分頁；打開後可以切換成大眾運輸、開車或步行。建議先下載行程，避免切換 App 後行程消失。</p>';
   r.days.forEach((d,i)=>{
     h+='<p id="rt'+i+'" style="margin:10px 0 4px;font-weight:600;scroll-margin-top:16px">第 '+(i+1)+' 天<a class="rtback" href="#day'+i+'" data-back="'+i+'">↑ 回到第 '+(i+1)+' 天</a></p>';
@@ -1214,6 +1223,7 @@ function routeHTML(o,r){
   return h+'</div></div>';
 }
 function toText(o,r){
+  r=withCus(r);
   const L=['旅遊行程｜'+o.dest+' '+o.days+' 天',
     WHO[o.who]+'，共 '+o.ppl+' 人｜'+TR[o.trans]+'｜預算：'+BT[o.dest][o.bud-1]];
   if(o.note)L.push('我的提醒：'+o.note);
@@ -1223,6 +1233,7 @@ function toText(o,r){
     L.push('【第 '+(i+1)+' 天】');
     let last=null;
     d.forEach(x=>{
+      if(x.custom){L.push(x.time+'  【'+(x.kind==='景點'?'景點':'美食')+'】'+x.n+'（自己加的）');L.push('       '+CUS_NOTE);return}
       const e=x.kind!=='景點';
       if(!e)last=x;
       const lab=e?(x.kind==='點心'?'點心':(x.time<'15:00'?'午餐':'晚餐')):'景點';
@@ -1238,6 +1249,7 @@ function toText(o,r){
   return L.join('\r\n');
 }
 function drawPages(o,r){
+  r=withCus(r);
   let pg;
   for(const K of [1,.94,.88,.82,.76,.7]){
     pg=drawPagesK(o,r,K);pg.k=K;
@@ -1274,6 +1286,7 @@ function drawPagesK(o,r,K){
     cx.fillStyle=C[i%3];cx.fillRect(M,y,W-M*2,4);y+=Math.round(24*K);
     let last=null;
     d.forEach(x=>{
+      if(x.custom){const L2='【'+(x.kind==='景點'?'景點':'美食')+'】';cx.font=fnt(Math.round(30*K),1);cx.fillStyle='#6f655b';cx.fillText(x.time,M,y+Math.round(36*K));cx.font=fnt(Math.round(38*K),1);cx.fillStyle='#85677d';cx.fillText(L2,M+140,y+Math.round(38*K));cx.fillStyle='#3a332c';cx.fillText(x.n,M+140+cx.measureText(L2).width+6,y+Math.round(38*K));y+=Math.round(62*K);para('自己加的｜'+CUS_NOTE,24,'#8a4b00',0,M+140,0);y+=Math.round(22*K);return}
       const e=x.kind!=='景點';
       if(!e)last=x;
       const lab=e?(x.kind==='點心'?'點心':(x.time<'15:00'?'午餐':'晚餐')):'景點';
@@ -1431,6 +1444,14 @@ function openSwap(n,cb){
   if(!delWarned){w.textContent='提醒：更換後的行程不會自動保存，重新整理或離開頁面就會消失，請先下載 PDF 或文字檔。';w.hidden=false;delWarned=true}else{w.hidden=true}
   m.hidden=false;m.querySelector('#delno').focus();
 }
+function cusForm(i){
+  return '<form class="cform" id="cf'+i+'" data-i="'+i+'" hidden novalidate><p style="margin:0 0 8px;font-weight:600">新增到第 '+(i+1)+' 天</p>'
+   +'<label class="t" for="cn'+i+'">名稱</label><input type="text" id="cn'+i+'" maxlength="40" autocomplete="off" placeholder="例如：朋友推薦的咖啡廳">'
+   +'<fieldset style="margin:10px 0"><legend>類型</legend><div class="chk"><label><input type="radio" name="ck'+i+'" value="景點" checked>景點</label><label><input type="radio" name="ck'+i+'" value="美食">美食</label></div></fieldset>'
+   +'<label class="t" for="ct'+i+'">時間</label><select id="ct'+i+'">'+TIMES.map(t=>'<option'+(t==='15:00'?' selected':'')+'>'+t+'</option>').join('')+'</select>'
+   +'<p class="meta" style="margin:10px 0 0">⚠️ '+CUS_NOTE+'<br>重新整理或離開頁面後，自己加的行程也會消失，記得下載。</p><p class="cerr warn meta" role="alert" style="margin:4px 0 0"></p>'
+   +'<div class="mb"><div class="bt" style="margin-top:10px"><button type="submit">加入</button><button type="button" class="c cno">取消</button></div></div></form>';
+}
 function render(o,r,keep){
   const out=$('#out');
   if(r.err){out.innerHTML='<div class="sum"><p class="warn">'+esc(r.err)+'</p></div>';out.hidden=false;return}
@@ -1443,11 +1464,13 @@ function render(o,r,keep){
   if(o.note)h+='<p>你的提醒：'+esc(o.note)+'</p>';
   warns(o,r).forEach(w=>h+='<p class="warn">注意：'+esc(w)+'</p>');
   h+='</div>';
-  r.days.forEach((d,i)=>{
+  r.cus=r.cus||r.days.map(()=>[]);
+  withCus(r).days.forEach((d,i)=>{
     const sn=d.filter(x=>x.kind==='景點').map(x=>x.n),fo=d.filter(x=>x.kind!=='景點').map(dispN);
     let last=null;
-    h+='<div class="day" id="day'+i+'" style="scroll-margin-top:16px"><div class="dh"><h3>第 '+(i+1)+' 天</h3><div class="dbtn"><button class="swp" type="button" data-d="'+i+'">更換這一天</button><button class="swp rgo" type="button" data-r="'+i+'">🚃 這天怎麼去</button></div></div><p class="meta">今天逛：'+esc(sn.join('、'))+'<br>今天吃：'+esc(fo.join('、'))+'</p>';
+    h+='<div class="day" id="day'+i+'" style="scroll-margin-top:16px"><div class="dh"><h3>第 '+(i+1)+' 天</h3><div class="dbtn"><button class="swp" type="button" data-d="'+i+'">更換這一天</button><button class="swp rgo" type="button" data-r="'+i+'">🚃 這天怎麼去</button><button class="swp cadd" type="button" data-a="'+i+'" aria-expanded="false" aria-controls="cf'+i+'">＋ 新增</button></div></div>'+cusForm(i)+'<p class="meta">今天逛：'+esc(sn.join('、'))+'<br>今天吃：'+esc(fo.join('、'))+'</p>';
     d.forEach(x=>{
+      if(x.custom){const ci=r.cus[i].indexOf(x);h+='<div class="it cus"><div class="tm">'+x.time+'</div><div><div><span class="tag cu">'+(x.kind==='景點'?'景點':'美食')+'</span><a class="nm" href="'+esc(placeLink(o,x))+'" target="_blank" rel="noopener" aria-label="在 Google 地圖查看 '+esc(x.n)+'（另開分頁）">'+esc(x.n)+'<span class="ext" aria-hidden="true"> ↗</span></a></div><div class="meta">自己加的</div><div class="link">'+esc(CUS_NOTE)+'</div><button class="swp cdel" type="button" data-d="x" data-cd="'+i+'" data-ci="'+ci+'" style="margin-top:6px">刪除</button></div></div>';return}
       const e=x.kind!=='景點';
       if(!e)last=x;
       const lab=e?(x.kind==='點心'?'點心':(x.time<'15:00'?'午餐':'晚餐')):'景點';
@@ -1472,7 +1495,14 @@ function render(o,r,keep){
   out.querySelectorAll('button.rgo').forEach(b=>{b.onclick=()=>{rtOpen();const t=$('#rt'+b.dataset.r);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}});
   out.querySelectorAll('a.rtback').forEach(a=>{a.onclick=e=>{e.preventDefault();const t=$('#day'+a.dataset.back);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}});
   $('#back').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
-  out.querySelectorAll('button.swp[data-d]').forEach(b=>{b.onclick=()=>{const d=+b.dataset.d;openSwap(d+1,()=>{const res=swapDay(o,r,d);if(res.changed>0){const y=window.scrollY;r.days[d]=res.day;render(o,r,true);window.scrollTo(0,y)}return res})}});
+  const rer=()=>{const y=window.scrollY;render(o,r,true);window.scrollTo(0,y)};
+  out.querySelectorAll('button.cadd').forEach(b=>{b.onclick=()=>{const f=$('#cf'+b.dataset.a);f.hidden=!f.hidden;b.setAttribute('aria-expanded',String(!f.hidden));if(!f.hidden)f.querySelector('input').focus()}});
+  out.querySelectorAll('.cform').forEach(f=>{const i=+f.dataset.i;f.querySelector('.cno').onclick=()=>{f.hidden=true;out.querySelector('.cadd[data-a="'+i+'"]').setAttribute('aria-expanded','false')};
+    f.onsubmit=e=>{e.preventDefault();const nm=f.querySelector('input').value.trim(),er=f.querySelector('.cerr');if(!nm){er.textContent='請輸入名稱。';f.querySelector('input').focus();return}
+      r.cus[i].push({n:nm,a:'',kind:f.querySelector('input[name=ck'+i+']:checked').value,time:f.querySelector('select').value,custom:true,d:''});rer();
+      const t=$('#day'+i);if(t)t.scrollIntoView({block:'start'})}});
+  out.querySelectorAll('button.cdel').forEach(b=>{b.onclick=()=>{const i=+b.dataset.cd,k=+b.dataset.ci,x=r.cus[i][k];if(x&&confirm('確定要刪除「'+x.n+'」嗎？')){r.cus[i].splice(k,1);rer()}}});
+  out.querySelectorAll('button.swp[data-d]:not(.cdel)').forEach(b=>{b.onclick=()=>{const d=+b.dataset.d;openSwap(d+1,()=>{const res=swapDay(o,r,d);if(res.changed>0){r.days[d]=res.day;rer()}return res})}});
   $('#dlp').onclick=async()=>{const t=$('#dlp'),old=t.textContent;t.textContent='製作中…';await new Promise(f=>setTimeout(f,30));try{const pg=drawPages(o,r);const ok=await download('旅遊行程_'+o.dest+'_'+o.days+'天.pdf',pdfFrom(pg));if(!ok&&!/取消/.test($('#dlmsg').textContent))showPages(pg)}finally{t.textContent=old}};
   $('#dl').onclick=async()=>{const t=toText(o,r);const ok=await download('旅遊行程_'+o.dest+'_'+o.days+'天.txt',t);if(!ok&&!/取消/.test($('#dlmsg').textContent))showText(t)};
   if(!keep)out.scrollIntoView({behavior:'smooth'});

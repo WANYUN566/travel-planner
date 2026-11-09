@@ -159,11 +159,84 @@ h1{font-size:28px;font-weight:700;letter-spacing:.06em;margin:0 0 10px}
  #f .row{gap:0}
  #f .chk label{padding:6px 12px;font-size:14px}
 }
+</style><style id="trip-card">
+/* 地圖小圖示：取代 ↗ */
+.ext{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;margin-left:6px;border-radius:50%;background:var(--soft);vertical-align:2px;font-size:0}
+.ext svg{width:12px;height:12px;display:block}
+a.nm:hover .ext{background:var(--main)}
+a.nm:hover .ext svg path{stroke:#fff}
+/* 出發小卡 */
+.tripcard{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 16px;margin:0 0 18px;box-shadow:0 6px 20px rgba(135,75,85,.08);overflow:hidden}
+.tripcard svg{flex:0 0 132px;width:132px;height:96px}
+.tripcard p{margin:0;font-size:14px;line-height:1.7;color:var(--sub)}
+.tripcard strong{display:block;font-size:16px;color:var(--ink);letter-spacing:.06em}
+@keyframes tc-walk{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes tc-legA{0%,100%{transform:rotate(14deg)}50%{transform:rotate(-14deg)}}
+@keyframes tc-legB{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}}
+@keyframes tc-wheel{to{transform:rotate(360deg)}}
+@keyframes tc-cloud{from{transform:translateX(0)}to{transform:translateX(-150px)}}
+@keyframes tc-road{from{stroke-dashoffset:0}to{stroke-dashoffset:-24}}
+@keyframes tc-glow{0%,100%{opacity:.25}50%{opacity:.9}}
+.tc-body{animation:tc-walk .9s ease-in-out infinite}
+.tc-legA{transform-origin:63px 70px;animation:tc-legA .9s ease-in-out infinite}
+.tc-legB{transform-origin:63px 70px;animation:tc-legB .9s ease-in-out infinite}
+.tc-wheel{transform-box:fill-box;transform-origin:center;animation:tc-wheel .9s linear infinite}
+.tc-cloud{animation:tc-cloud 9s linear infinite}
+.tc-road{animation:tc-road .9s linear infinite}
+.tc-glow{animation:tc-glow 1.8s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.tripcard *{animation:none!important}}
+@media(max-width:360px){.tripcard svg{flex-basis:104px;width:104px;height:76px}.tripcard{gap:10px;padding:10px 12px}}
 </style></head>
 <body>
 <main>
 <h1>旅遊行程規劃助手</h1>
 <p class="lead">不用自己查一堆。填好需求，我幫你把要逛的景點和想吃的東西一起挑好，排成每天的行程。</p>
+<div class="tripcard" role="img" aria-label="一個穿著米色風衣、戴著貝雷帽的人，一手拿手機、一手拖著奶油色行李箱，準備出發旅行的小動畫">
+<svg viewBox="0 0 150 100" aria-hidden="true">
+<g class="tc-cloud"><g fill="#FFFFFF"><ellipse cx="118" cy="20" rx="13" ry="6"/><ellipse cx="127" cy="16" rx="8" ry="6"/><ellipse cx="270" cy="24" rx="12" ry="5"/></g>
+ <g fill="#F2B8BE"><path d="M100 30 l2 -2 a1.6 1.6 0 0 1 2.4 2.2 l-2.4 2.4 -2.4 -2.4 a1.6 1.6 0 0 1 2.4 -2.2z" transform="translate(0 -2)"/><path d="M230 12 l2 -2 a1.6 1.6 0 0 1 2.4 2.2 l-2.4 2.4 -2.4 -2.4 a1.6 1.6 0 0 1 2.4 -2.2z"/></g>
+ <g fill="#C9D3E6"><path d="M140 40 l1 3 3 1 -3 1 -1 3 -1 -3 -3 -1 3 -1z"/><path d="M250 44 l1 3 3 1 -3 1 -1 3 -1 -3 -3 -1 3 -1z"/></g></g>
+<line class="tc-road" x1="0" y1="93" x2="150" y2="93" stroke="#EBCFCB" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 6"/>
+<g class="tc-body">
+ <!-- 腿與白色球鞋 -->
+ <g class="tc-legB"><path d="M63 70 L63 86" stroke="#B9AFA6" stroke-width="5" stroke-linecap="round"/><ellipse cx="65" cy="88.5" rx="4.6" ry="2.4" fill="#FFFFFF" stroke="#E2D6D0"/></g>
+ <g class="tc-legA"><path d="M63 70 L63 86" stroke="#CFC6BD" stroke-width="5" stroke-linecap="round"/><ellipse cx="65" cy="88.5" rx="4.6" ry="2.4" fill="#FFFFFF" stroke="#E2D6D0"/></g>
+ <!-- 米色長風衣 -->
+ <path d="M53 46 Q63 40 73 46 L77 74 Q63 78 49 74 Z" fill="#E8D5BE"/>
+ <path d="M63 47 L63 75" stroke="#D6BFA4" stroke-width="1"/>
+ <path d="M51 60 Q63 63 75 60" stroke="#D6BFA4" stroke-width="2" fill="none"/>
+ <!-- 斜背小包 -->
+ <path d="M56 46 L72 62" stroke="#9A5A64" stroke-width="1.6"/><rect x="69" y="60" width="7" height="6" rx="2" fill="#9A5A64"/>
+ <!-- 大大的頭（Q版） -->
+ <circle cx="64" cy="31" r="12" fill="#FBE3DC"/>
+ <path d="M52 32 Q51 18 64 18 Q76 18 76 30 Q72 25 64 26 Q58 27 56 36 Z" fill="#5B4A47"/>
+ <path d="M52 30 Q50 40 55 44" stroke="#5B4A47" stroke-width="4" fill="none" stroke-linecap="round"/>
+ <!-- 貝雷帽 -->
+ <ellipse cx="63" cy="19" rx="12" ry="5" fill="#F2B8BE"/><circle cx="63" cy="14.5" r="1.6" fill="#E59AA4"/>
+ <!-- 臉頰與眼睛 -->
+ <ellipse cx="72" cy="35" rx="2.4" ry="1.5" fill="#F4A9B2" opacity=".8"/>
+ <path d="M70 31 q1.6 -1.6 3.2 0" stroke="#5B4A47" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+ <!-- 拿手機的手 -->
+ <path d="M73 50 Q83 52 84 43" stroke="#E8D5BE" stroke-width="5" fill="none" stroke-linecap="round"/>
+ <circle cx="84" cy="43" r="2.2" fill="#FBE3DC"/>
+ <rect x="82" y="33" width="6.5" height="11" rx="2" fill="#F2B8BE"/>
+ <rect class="tc-glow" x="83.2" y="34.6" width="4.1" height="6.6" rx="1" fill="#FFFFFF"/>
+ <!-- 拖行李的手 -->
+ <path d="M54 50 Q46 57 40 60" stroke="#E8D5BE" stroke-width="5" fill="none" stroke-linecap="round"/>
+ <circle cx="40" cy="60" r="2.2" fill="#FBE3DC"/>
+</g>
+<!-- 奶油色行李箱 -->
+<line x1="40" y1="60" x2="32" y2="68" stroke="#B9AFA6" stroke-width="2.2" stroke-linecap="round"/>
+<rect x="14" y="66" width="24" height="23" rx="6" fill="#F6E7D3" stroke="#E2CDB2" stroke-width="1.2"/>
+<line x1="21" y1="70" x2="21" y2="85" stroke="#E2CDB2" stroke-width="1.4"/><line x1="31" y1="70" x2="31" y2="85" stroke="#E2CDB2" stroke-width="1.4"/>
+<circle cx="26" cy="75" r="3" fill="#F2B8BE"/><path d="M24.6 74.4 l1.4 1.4 2 -2.2" stroke="#fff" stroke-width=".9" fill="none" stroke-linecap="round"/>
+<rect x="15.5" y="80" width="6" height="4" rx="1.2" fill="#C9D3E6"/>
+<g class="tc-wheel"><circle cx="19" cy="91" r="2.6" fill="#B9AFA6"/><line x1="19" y1="89" x2="19" y2="93" stroke="#fff" stroke-width=".8"/></g>
+<g class="tc-wheel"><circle cx="33" cy="91" r="2.6" fill="#B9AFA6"/><line x1="33" y1="89" x2="33" y2="93" stroke="#fff" stroke-width=".8"/></g>
+</svg>
+<p><strong>準備出發囉！</strong>選好地點和天數，剩下的交給我 ☁️</p>
+</div>
+
 
 <form id="f">
 <div class="intro"><p class="meta"><strong>先告訴我這趟旅行想怎麼玩，我再幫你整理行程。</strong></p><p class="meta">只需選擇旅遊地點與天數，即可開始規劃行程！其他項目可依需求自由填寫。</p></div>
@@ -1539,7 +1612,7 @@ function render(o,r,keep){
     let last=null;
     h+='<div class="day" id="day'+i+'" style="scroll-margin-top:16px"><div class="dh"><h3>第 '+(i+1)+' 天</h3><div class="dbtn"><button class="swp" type="button" data-d="'+i+'">更換這一天</button><button class="swp rgo" type="button" data-r="'+i+'">🚃 這天怎麼去</button><button class="swp cadd" type="button" data-a="'+i+'" aria-expanded="false" aria-controls="cf'+i+'">＋ 新增</button></div></div>'+cusForm(i)+'<p class="meta">今天逛：'+esc(sn.join('、'))+'<br>今天吃：'+esc(fo.join('、'))+'</p>';
     d.forEach(x=>{
-      if(x.custom){const ci=r.cus[i].indexOf(x);h+='<div class="it cus"><div class="tm">'+x.time+'</div><div><div><span class="tag cu">'+(x.kind==='景點'?'景點':'美食')+'</span><a class="nm" href="'+esc(placeLink(o,x))+'" target="_blank" rel="noopener" aria-label="在 Google 地圖查看 '+esc(x.n)+'（另開分頁）">'+esc(x.n)+'<span class="ext" aria-hidden="true"> ↗</span></a></div><div class="meta">自己加的</div><div class="link">'+esc(CUS_NOTE)+'</div><button class="swp cdel" type="button" data-d="x" data-cd="'+i+'" data-ci="'+ci+'" style="margin-top:6px">刪除</button></div></div>';return}
+      if(x.custom){const ci=r.cus[i].indexOf(x);h+='<div class="it cus"><div class="tm">'+x.time+'</div><div><div><span class="tag cu">'+(x.kind==='景點'?'景點':'美食')+'</span><a class="nm" href="'+esc(placeLink(o,x))+'" target="_blank" rel="noopener" aria-label="在 Google 地圖查看 '+esc(x.n)+'（另開分頁）">'+esc(x.n)+'<span class="ext" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2h6v6M10 2 3 9" fill="none" stroke="#874B55" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div><div class="meta">自己加的</div><div class="link">'+esc(CUS_NOTE)+'</div><button class="swp cdel" type="button" data-d="x" data-cd="'+i+'" data-ci="'+ci+'" style="margin-top:6px">刪除</button></div></div>';return}
       const e=x.kind!=='景點';
       if(!e)last=x;
       const lab=e?(x.kind==='點心'?'點心':(x.time<'15:00'?'午餐':'晚餐')):'景點';
@@ -1551,7 +1624,7 @@ function render(o,r,keep){
         link='<div class="link">'+esc(t)+'</div>';
       }
       if(spotFar(o.dest,d,x))link='<div class="link">'+esc(FAR_SPOT)+'</div>';
-      h+='<div class="it"><div class="tm">'+x.time+'</div><div><div><span class="tag'+(e?' e':'')+(lab==='午餐'?' lu':lab==='點心'?' sn':lab==='晚餐'?' di':'')+'">'+lab+'</span><a class="nm" href="'+esc(placeLink(o,x))+'" target="_blank" rel="noopener" aria-label="在 Google 地圖查看 '+esc(dispN(x))+'（另開分頁）">'+esc(dispN(x))+'<span class="ext" aria-hidden="true"> ↗</span></a></div>'
+      h+='<div class="it"><div class="tm">'+x.time+'</div><div><div><span class="tag'+(e?' e':'')+(lab==='午餐'?' lu':lab==='點心'?' sn':lab==='晚餐'?' di':'')+'">'+lab+'</span><a class="nm" href="'+esc(placeLink(o,x))+'" target="_blank" rel="noopener" aria-label="在 Google 地圖查看 '+esc(dispN(x))+'（另開分頁）">'+esc(dispN(x))+'<span class="ext" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2h6v6M10 2 3 9" fill="none" stroke="#874B55" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>'
         +'<div class="meta">'+esc(x.a)+'｜'+$m(x)+(e?'':'｜<span style="white-space:nowrap">約 '+x.h+' 小時</span>')+'</div><div class="note">'+esc(x.d)+'</div>'+(nsLine(x)?'<div class="meta">'+esc(nsLine(x))+'</div>':'')+link+'</div></div>';
     });
     h+='</div>';

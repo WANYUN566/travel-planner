@@ -98,6 +98,20 @@ main>*:not(#out){display:none!important}
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 </style>
+<style id="theme-pink">
+:root{--ink:#2E2A33;--sub:#625C69;--bg:#FBF3F2;--card:#FFFFFF;--soft:#F6E2E0;--line:#EBD8D6;--main:#9B5C66;--mainD:#814A54;--spot:#5F6B82;--eat:#9B5C66}
+body{background:linear-gradient(180deg,#FBF3F2 0%,#FBF3F2 60%,#F7E8E6 100%)}
+.sum{background:#F6E2E0;border-color:#EBCFCB}
+form,.day{box-shadow:0 6px 24px rgba(155,92,102,.10)}
+select,input[type=number],textarea,.chk label,.cform,.cform input[type=text]{background:#FFFBFA}
+#out>:nth-child(3),#out>:nth-child(6){--dc:#5F6B82}
+#out>:nth-child(4){--dc:#B0707A}
+.tag.lu,.tag.sn,.tag.di{background:#9B5C66}
+#likes label:has(input:checked){background:#E4E8F0;border-color:#5F6B82;color:#3F4A5E}
+#avoid label:has(input:checked){background:#F6E2E0;border-color:#9B5C66;color:#7A3F4A}
+.warn{color:#8A4B3F!important}
+.link{color:#8A4B3F}
+</style>
 </head>
 <body>
 <main>

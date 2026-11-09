@@ -54,6 +54,9 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
 .it:first-of-type{border-top:0}
 .tm{font-weight:600;font-variant-numeric:tabular-nums;color:var(--sub)}
 .nm{font-weight:600}
+a.nm{color:inherit;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+a.nm:hover{text-decoration-color:var(--main)}
+.ext{font-size:13px;color:var(--sub)}
 .tag{display:inline-block;font-size:13px;padding:0 8px;border-radius:6px;margin-right:6px;color:#fff;background:var(--spot)}
 .tag.e{background:var(--eat)}
 .meta{font-size:14px;color:var(--sub)}
@@ -1194,6 +1197,7 @@ function linkTxt(x,last){
     :'接在「'+last.n+'」之後，位置稍遠，出發前先確認怎麼過去。';
 }
 const placeQ=(o,x)=>o.dest+' '+x.n.replace(/（[^）]*）$/,'')+(x.a&&x.a!=='多處'?' '+x.a:'');
+const placeLink=(o,x)=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(placeQ(o,x));
 const mapSeg=q=>q.replace(/[\/?#&%]/g,' ').trim().replace(/\s+/g,'+');
 const mapLink=(o,a,b)=>'https://www.google.com/maps/dir/'+mapSeg(placeQ(o,a))+'/'+mapSeg(placeQ(o,b))+'/';
 function routeHTML(o,r){
@@ -1455,7 +1459,7 @@ function render(o,r,keep){
         link='<div class="link">'+esc(t)+'</div>';
       }
       if(spotFar(o.dest,d,x))link='<div class="link">'+esc(FAR_SPOT)+'</div>';
-      h+='<div class="it"><div class="tm">'+x.time+'</div><div><div><span class="tag'+(e?' e':'')+(lab==='午餐'?' lu':lab==='點心'?' sn':lab==='晚餐'?' di':'')+'">'+lab+'</span><span class="nm">'+esc(dispN(x))+'</span></div>'
+      h+='<div class="it"><div class="tm">'+x.time+'</div><div><div><span class="tag'+(e?' e':'')+(lab==='午餐'?' lu':lab==='點心'?' sn':lab==='晚餐'?' di':'')+'">'+lab+'</span><a class="nm" href="'+esc(placeLink(o,x))+'" target="_blank" rel="noopener" aria-label="在 Google 地圖查看 '+esc(dispN(x))+'（另開分頁）">'+esc(dispN(x))+'<span class="ext" aria-hidden="true"> ↗</span></a></div>'
         +'<div class="meta">'+esc(x.a)+'｜'+$m(x)+(e?'':'｜<span style="white-space:nowrap">約 '+x.h+' 小時</span>')+'</div><div class="note">'+esc(x.d)+'</div>'+(nsLine(x)?'<div class="meta">'+esc(nsLine(x))+'</div>':'')+link+'</div></div>';
     });
     h+='</div>';

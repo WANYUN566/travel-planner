@@ -196,6 +196,42 @@ a.nm:hover .ext svg path{stroke:#fff}
 main{position:relative;z-index:1}
 @media(min-width:1100px){.side-deco{display:block}}
 @media print{.side-deco{display:none!important}}
+</style><style id="pick-css">
+.pickbtn{display:block;width:100%;margin-top:12px}
+.pickhint{text-align:center;margin:8px 0 0}
+#pick{margin-top:22px}
+#pick .ph-top{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin-bottom:14px}
+#pick .ph-top h2{margin:0 0 6px;font-size:22px}
+#pick .ph-top p{margin:4px 0;font-size:15px}
+.pjump{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;margin:0 0 4px}
+.pjump a{flex:0 0 auto;font-size:14px;color:var(--main);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 14px;text-decoration:none;white-space:nowrap}
+.pjump a:hover{background:var(--soft)}
+.pz{scroll-margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 12px 6px;margin:0 0 14px}
+.pz h3{margin:0 0 4px;font-size:18px;color:var(--main)}
+.pz .pzs{font-size:13px;color:var(--sub);margin:0 0 8px}
+.pz h4{margin:10px 2px 6px;font-size:14px;color:var(--sub);font-weight:600;letter-spacing:.05em}
+.pgrid{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:620px){.pgrid{grid-template-columns:1fr 1fr}}
+.pc{position:relative;display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:start;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 10px 10px 10px;cursor:pointer;transition:border-color .15s,background .15s}
+.pc:hover{border-color:var(--main)}
+.pc input{position:absolute;opacity:0;width:1px;height:1px}
+.pc:has(input:focus-visible){outline:2px solid var(--ink);outline-offset:2px}
+.pc:has(input:checked){border-color:var(--main);background:#FFF6F6}
+.pc .pi{width:52px;height:52px;border-radius:14px;background:var(--soft);display:flex;align-items:center;justify-content:center}
+.pc .pi svg{width:40px;height:40px;display:block}
+.pc .pt b{display:block;font-size:15px;line-height:1.45;padding-right:30px}
+.pc .pt small{display:block;font-size:12.5px;line-height:1.5;color:var(--sub)}
+.pc .ck{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
+.pc:has(input:checked) .ck{background:var(--main);border-color:var(--main)}
+.pc .pp{display:inline-block;margin-top:4px;font-size:12.5px;color:var(--main);text-decoration:underline;text-underline-offset:3px}
+.pbar{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:6px 0 0;box-shadow:0 -6px 18px rgba(135,75,85,.12)}
+.pbar .pcnt{flex:1;font-size:14px;line-height:1.4}
+.pbar .pcnt b{color:var(--main)}
+.pbar button{width:auto;margin:0;padding:11px 18px}
+.pbar button.c{background:none;color:var(--main);border:1px solid var(--main);padding:10px 12px}
+.it .ico{display:inline-flex;vertical-align:-9px;width:30px;height:30px;border-radius:9px;background:var(--soft);align-items:center;justify-content:center;margin-right:6px}
+.it .ico svg{width:24px;height:24px}
+@media print{#pick,.pickbtn,.pickhint,#topick{display:none!important}}
 </style></head>
 <body>
 <div class="side-deco" aria-hidden="true"><svg class="deco-l" viewBox="0 0 240 900" preserveAspectRatio="xMidYMin meet" aria-hidden="true"><defs><pattern id="dots" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.3" fill="#FFFFFF"/></pattern></defs><path id="fl1" d="M140 116 C 40 180, 40 260, 86 352 S 190 470, 92 596 S 40 740, 150 820" fill="none" stroke="#D9A3A6" stroke-width="1.8" stroke-dasharray="2 7" stroke-linecap="round"/><g class="fp"><g><path d="M-14 0 Q-14 -3.4 -10 -3.4 H8 Q14 -3.4 16 0 Q14 3.4 8 3.4 H-10 Q-14 3.4 -14 0Z" fill="#D9A3A6"/><path d="M-2 -3 L-8 -13 Q-6 -14.5 -3.5 -13.5 L5 -3Z M-2 3 L-8 13 Q-6 14.5 -3.5 13.5 L5 3Z" fill="#D9A3A6"/><path d="M-12 -2.5 L-15.5 -8 Q-14 -9 -12.5 -8.4 L-9 -2.5Z" fill="#D9A3A6"/></g><animateMotion dur="26s" begin="0s" repeatCount="indefinite" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath href="#fl1"/></animateMotion></g><g transform="translate(110 80) rotate(8)"><rect width="58" height="72" fill="#FFFFFF"/><g fill="var(--bg)"><circle cx="0" cy="0" r="2.2"/><circle cx="0" cy="72" r="2.2"/><circle cx="6" cy="0" r="2.2"/><circle cx="6" cy="72" r="2.2"/><circle cx="12" cy="0" r="2.2"/><circle cx="12" cy="72" r="2.2"/><circle cx="18" cy="0" r="2.2"/><circle cx="18" cy="72" r="2.2"/><circle cx="24" cy="0" r="2.2"/><circle cx="24" cy="72" r="2.2"/><circle cx="30" cy="0" r="2.2"/><circle cx="30" cy="72" r="2.2"/><circle cx="36" cy="0" r="2.2"/><circle cx="36" cy="72" r="2.2"/><circle cx="42" cy="0" r="2.2"/><circle cx="42" cy="72" r="2.2"/><circle cx="48" cy="0" r="2.2"/><circle cx="48" cy="72" r="2.2"/><circle cx="54" cy="0" r="2.2"/><circle cx="54" cy="72" r="2.2"/><circle cx="0" cy="0" r="2.2"/><circle cx="58" cy="0" r="2.2"/><circle cx="0" cy="6" r="2.2"/><circle cx="58" cy="6" r="2.2"/><circle cx="0" cy="12" r="2.2"/><circle cx="58" cy="12" r="2.2"/><circle cx="0" cy="18" r="2.2"/><circle cx="58" cy="18" r="2.2"/><circle cx="0" cy="24" r="2.2"/><circle cx="58" cy="24" r="2.2"/><circle cx="0" cy="30" r="2.2"/><circle cx="58" cy="30" r="2.2"/><circle cx="0" cy="36" r="2.2"/><circle cx="58" cy="36" r="2.2"/><circle cx="0" cy="42" r="2.2"/><circle cx="58" cy="42" r="2.2"/><circle cx="0" cy="48" r="2.2"/><circle cx="58" cy="48" r="2.2"/><circle cx="0" cy="54" r="2.2"/><circle cx="58" cy="54" r="2.2"/><circle cx="0" cy="60" r="2.2"/><circle cx="58" cy="60" r="2.2"/><circle cx="0" cy="66" r="2.2"/><circle cx="58" cy="66" r="2.2"/><circle cx="0" cy="72" r="2.2"/><circle cx="58" cy="72" r="2.2"/></g><rect x="7" y="7" width="44" height="58" fill="#E9C9A8" opacity=".35"/><path d="M10 58 L24 34 L31 44 L38 30 L48 58Z" fill="#9FB0C8"/><circle cx="40" cy="20" r="5" fill="#FFFFFF"/></g><g transform="translate(40 330) rotate(-6)"><path d="M0 0 h96 v14 a6 6 0 0 0 0 12 v14 h-96 v-14 a6 6 0 0 0 0 -12Z" fill="#FFFFFF" stroke="#D9A3A6" stroke-width="1.6"/><path d="M70 4 v32" stroke="#D9A3A6" stroke-width="1.4" stroke-dasharray="3 3"/><rect x="10" y="10" width="40" height="5" rx="2.5" fill="#D9A3A6" opacity=".7"/><rect x="10" y="21" width="28" height="4" rx="2" fill="#D9A3A6" opacity=".45"/><path d="M78 14 l8 6 l-8 6" stroke="#D9A3A6" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g><g transform="translate(60 560) rotate(-7)"><rect width="58" height="72" fill="#FFFFFF"/><g fill="var(--bg)"><circle cx="0" cy="0" r="2.2"/><circle cx="0" cy="72" r="2.2"/><circle cx="6" cy="0" r="2.2"/><circle cx="6" cy="72" r="2.2"/><circle cx="12" cy="0" r="2.2"/><circle cx="12" cy="72" r="2.2"/><circle cx="18" cy="0" r="2.2"/><circle cx="18" cy="72" r="2.2"/><circle cx="24" cy="0" r="2.2"/><circle cx="24" cy="72" r="2.2"/><circle cx="30" cy="0" r="2.2"/><circle cx="30" cy="72" r="2.2"/><circle cx="36" cy="0" r="2.2"/><circle cx="36" cy="72" r="2.2"/><circle cx="42" cy="0" r="2.2"/><circle cx="42" cy="72" r="2.2"/><circle cx="48" cy="0" r="2.2"/><circle cx="48" cy="72" r="2.2"/><circle cx="54" cy="0" r="2.2"/><circle cx="54" cy="72" r="2.2"/><circle cx="0" cy="0" r="2.2"/><circle cx="58" cy="0" r="2.2"/><circle cx="0" cy="6" r="2.2"/><circle cx="58" cy="6" r="2.2"/><circle cx="0" cy="12" r="2.2"/><circle cx="58" cy="12" r="2.2"/><circle cx="0" cy="18" r="2.2"/><circle cx="58" cy="18" r="2.2"/><circle cx="0" cy="24" r="2.2"/><circle cx="58" cy="24" r="2.2"/><circle cx="0" cy="30" r="2.2"/><circle cx="58" cy="30" r="2.2"/><circle cx="0" cy="36" r="2.2"/><circle cx="58" cy="36" r="2.2"/><circle cx="0" cy="42" r="2.2"/><circle cx="58" cy="42" r="2.2"/><circle cx="0" cy="48" r="2.2"/><circle cx="58" cy="48" r="2.2"/><circle cx="0" cy="54" r="2.2"/><circle cx="58" cy="54" r="2.2"/><circle cx="0" cy="60" r="2.2"/><circle cx="58" cy="60" r="2.2"/><circle cx="0" cy="66" r="2.2"/><circle cx="58" cy="66" r="2.2"/><circle cx="0" cy="72" r="2.2"/><circle cx="58" cy="72" r="2.2"/></g><rect x="7" y="7" width="44" height="58" fill="#9FB0C8" opacity=".35"/><circle cx="29" cy="28" r="9" fill="#FFFFFF"/><path d="M8 46 q5 -4 10 0 t10 0 t10 0 t10 0 M8 54 q5 -4 10 0 t10 0 t10 0 t10 0" stroke="#9FB0C8" stroke-width="2.4" fill="none"/></g><g transform="translate(100 800) rotate(5)"><path d="M0 0 h96 v14 a6 6 0 0 0 0 12 v14 h-96 v-14 a6 6 0 0 0 0 -12Z" fill="#FFFFFF" stroke="#9FB0C8" stroke-width="1.6"/><path d="M70 4 v32" stroke="#9FB0C8" stroke-width="1.4" stroke-dasharray="3 3"/><rect x="10" y="10" width="40" height="5" rx="2.5" fill="#9FB0C8" opacity=".7"/><rect x="10" y="21" width="28" height="4" rx="2" fill="#9FB0C8" opacity=".45"/><path d="M78 14 l8 6 l-8 6" stroke="#9FB0C8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></svg><svg class="deco-r" viewBox="0 0 240 900" preserveAspectRatio="xMidYMin meet" aria-hidden="true"><defs><pattern id="dots" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.3" fill="#FFFFFF"/></pattern></defs><path id="fl2" d="M136 186 C 230 260, 200 330, 92 412 S 30 560, 150 640 S 220 740, 160 806" fill="none" stroke="#9FB0C8" stroke-width="1.8" stroke-dasharray="2 7" stroke-linecap="round"/><g class="fp"><g><path d="M-14 0 Q-14 -3.4 -10 -3.4 H8 Q14 -3.4 16 0 Q14 3.4 8 3.4 H-10 Q-14 3.4 -14 0Z" fill="#9FB0C8"/><path d="M-2 -3 L-8 -13 Q-6 -14.5 -3.5 -13.5 L5 -3Z M-2 3 L-8 13 Q-6 14.5 -3.5 13.5 L5 3Z" fill="#9FB0C8"/><path d="M-12 -2.5 L-15.5 -8 Q-14 -9 -12.5 -8.4 L-9 -2.5Z" fill="#9FB0C8"/></g><animateMotion dur="30s" begin="-12s" repeatCount="indefinite" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath href="#fl2"/></animateMotion></g><g transform="translate(90 150) rotate(7)"><path d="M0 0 h96 v14 a6 6 0 0 0 0 12 v14 h-96 v-14 a6 6 0 0 0 0 -12Z" fill="#FFFFFF" stroke="#9FB0C8" stroke-width="1.6"/><path d="M70 4 v32" stroke="#9FB0C8" stroke-width="1.4" stroke-dasharray="3 3"/><rect x="10" y="10" width="40" height="5" rx="2.5" fill="#9FB0C8" opacity=".7"/><rect x="10" y="21" width="28" height="4" rx="2" fill="#9FB0C8" opacity=".45"/><path d="M78 14 l8 6 l-8 6" stroke="#9FB0C8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g><g transform="translate(60 380) rotate(-6)"><rect width="58" height="72" fill="#FFFFFF"/><g fill="var(--bg)"><circle cx="0" cy="0" r="2.2"/><circle cx="0" cy="72" r="2.2"/><circle cx="6" cy="0" r="2.2"/><circle cx="6" cy="72" r="2.2"/><circle cx="12" cy="0" r="2.2"/><circle cx="12" cy="72" r="2.2"/><circle cx="18" cy="0" r="2.2"/><circle cx="18" cy="72" r="2.2"/><circle cx="24" cy="0" r="2.2"/><circle cx="24" cy="72" r="2.2"/><circle cx="30" cy="0" r="2.2"/><circle cx="30" cy="72" r="2.2"/><circle cx="36" cy="0" r="2.2"/><circle cx="36" cy="72" r="2.2"/><circle cx="42" cy="0" r="2.2"/><circle cx="42" cy="72" r="2.2"/><circle cx="48" cy="0" r="2.2"/><circle cx="48" cy="72" r="2.2"/><circle cx="54" cy="0" r="2.2"/><circle cx="54" cy="72" r="2.2"/><circle cx="0" cy="0" r="2.2"/><circle cx="58" cy="0" r="2.2"/><circle cx="0" cy="6" r="2.2"/><circle cx="58" cy="6" r="2.2"/><circle cx="0" cy="12" r="2.2"/><circle cx="58" cy="12" r="2.2"/><circle cx="0" cy="18" r="2.2"/><circle cx="58" cy="18" r="2.2"/><circle cx="0" cy="24" r="2.2"/><circle cx="58" cy="24" r="2.2"/><circle cx="0" cy="30" r="2.2"/><circle cx="58" cy="30" r="2.2"/><circle cx="0" cy="36" r="2.2"/><circle cx="58" cy="36" r="2.2"/><circle cx="0" cy="42" r="2.2"/><circle cx="58" cy="42" r="2.2"/><circle cx="0" cy="48" r="2.2"/><circle cx="58" cy="48" r="2.2"/><circle cx="0" cy="54" r="2.2"/><circle cx="58" cy="54" r="2.2"/><circle cx="0" cy="60" r="2.2"/><circle cx="58" cy="60" r="2.2"/><circle cx="0" cy="66" r="2.2"/><circle cx="58" cy="66" r="2.2"/><circle cx="0" cy="72" r="2.2"/><circle cx="58" cy="72" r="2.2"/></g><rect x="7" y="7" width="44" height="58" fill="#9FB0C8" opacity=".35"/><path d="M29 14 L33 30 L36 58 L22 58 L25 30Z" fill="#D9A3A6"/><rect x="21" y="30" width="16" height="3" fill="#FFFFFF"/><rect x="18" y="42" width="22" height="3" fill="#FFFFFF"/></g><g transform="translate(110 620) rotate(-5)"><path d="M0 0 h96 v14 a6 6 0 0 0 0 12 v14 h-96 v-14 a6 6 0 0 0 0 -12Z" fill="#FFFFFF" stroke="#D9A3A6" stroke-width="1.6"/><path d="M70 4 v32" stroke="#D9A3A6" stroke-width="1.4" stroke-dasharray="3 3"/><rect x="10" y="10" width="40" height="5" rx="2.5" fill="#D9A3A6" opacity=".7"/><rect x="10" y="21" width="28" height="4" rx="2" fill="#D9A3A6" opacity=".45"/><path d="M78 14 l8 6 l-8 6" stroke="#D9A3A6" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g><g transform="translate(130 780) rotate(6)"><rect width="52" height="64" fill="#FFFFFF"/><g fill="var(--bg)"><circle cx="0" cy="0" r="2.2"/><circle cx="0" cy="64" r="2.2"/><circle cx="6" cy="0" r="2.2"/><circle cx="6" cy="64" r="2.2"/><circle cx="12" cy="0" r="2.2"/><circle cx="12" cy="64" r="2.2"/><circle cx="18" cy="0" r="2.2"/><circle cx="18" cy="64" r="2.2"/><circle cx="24" cy="0" r="2.2"/><circle cx="24" cy="64" r="2.2"/><circle cx="30" cy="0" r="2.2"/><circle cx="30" cy="64" r="2.2"/><circle cx="36" cy="0" r="2.2"/><circle cx="36" cy="64" r="2.2"/><circle cx="42" cy="0" r="2.2"/><circle cx="42" cy="64" r="2.2"/><circle cx="48" cy="0" r="2.2"/><circle cx="48" cy="64" r="2.2"/><circle cx="0" cy="0" r="2.2"/><circle cx="52" cy="0" r="2.2"/><circle cx="0" cy="6" r="2.2"/><circle cx="52" cy="6" r="2.2"/><circle cx="0" cy="12" r="2.2"/><circle cx="52" cy="12" r="2.2"/><circle cx="0" cy="18" r="2.2"/><circle cx="52" cy="18" r="2.2"/><circle cx="0" cy="24" r="2.2"/><circle cx="52" cy="24" r="2.2"/><circle cx="0" cy="30" r="2.2"/><circle cx="52" cy="30" r="2.2"/><circle cx="0" cy="36" r="2.2"/><circle cx="52" cy="36" r="2.2"/><circle cx="0" cy="42" r="2.2"/><circle cx="52" cy="42" r="2.2"/><circle cx="0" cy="48" r="2.2"/><circle cx="52" cy="48" r="2.2"/><circle cx="0" cy="54" r="2.2"/><circle cx="52" cy="54" r="2.2"/><circle cx="0" cy="60" r="2.2"/><circle cx="52" cy="60" r="2.2"/></g><rect x="7" y="7" width="38" height="50" fill="#E9C9A8" opacity=".35"/><path d="M12 24 h34 M14 30 h30" stroke="#D9A3A6" stroke-width="3.4" stroke-linecap="round"/><path d="M19 30 v28 M39 30 v28" stroke="#D9A3A6" stroke-width="3.4" stroke-linecap="round"/></g></svg></div>
@@ -299,9 +335,12 @@ main{position:relative;z-index:1}
 <textarea id="note" rows="2" placeholder="例如：記得帶護照、下午想留點休息時間"></textarea>
 <div class="meta">這裡的內容會顯示在行程上方提醒你，不會影響行程安排。</div></fieldset>
 </div>
-<button type="submit">幫我挑行程</button>
+<button type="submit">幫我挑行程（自動排好）</button>
+<button type="button" class="ghost pickbtn" id="pickbtn">我想自己挑 ☁️</button>
+<p class="meta pickhint">不知道要去哪？按「我想自己挑」，先看看有哪些景點和美食，點選喜歡的，我再幫你排成每天的行程。</p>
 </form>
 
+<section id="pick" hidden aria-labelledby="pk-h"></section>
 <section id="out" hidden aria-live="polite"></section>
 <footer>這裡的景點和吃的是我先挑好放進來的範例清單（台灣 22 個縣市，加上日本 6 個（東京、京都、大阪、沖繩、福岡、札幌）、韓國 3 個（首爾、釜山、濟州）、香港、澳門和曼谷，每個地點約 10–26 個景點、11–22 間吃的），不是即時資料，也不是即時搜尋。我只是依你填的條件，從清單裡挑出來再排順序。營業時間、價格、是否休息，出發前請自己再確認一次。</footer>
 </main>
@@ -1590,13 +1629,15 @@ function plan(o){
     if(!p.length){p=base.filter(x=>x.m===m);warn.add('飲食限制較多，我的清單裡找不到完全符合的店，這部分先列一般店家，用餐前請自己確認。')}
     if(o.avoid.includes('veg')&&p.length&&p.length<(m==='m'?6:3)){p=[...p,...all.filter(x=>x.m===m&&!p.includes(x))];warn.add('內建資料的素食店家有限，部分餐點請自行確認是否有素食選項。')}
     return p};
-  const ss=x=>[...x.t].filter(c=>o.likes.includes(c)).length*3+(kid&&x.t.includes('k')?2:0)-Math.max(0,x.c-bud)*2;
-  const fs=x=>(o.likes.includes(x.t)?3:0)+(o.avoid.includes('veg')&&x.v?5:0)-Math.max(0,x.c-bud)*2;
+  const PB=x=>o.pick&&o.pick.has(x.n)?100:0;
+  const ss=x=>[...x.t].filter(c=>o.likes.includes(c)).length*3+(kid&&x.t.includes('k')?2:0)-Math.max(0,x.c-bud)*2+PB(x);
+  const fs=x=>(o.likes.includes(x.t)?3:0)+(o.avoid.includes('veg')&&x.v?5:0)-Math.max(0,x.c-bud)*2+PB(x);
+  let curZ=new Set();
   const pick=(p,sc,near,used,day)=>{
     const ug=new Set([...used].map(u=>grp(u.n)));
     let c=p.filter(x=>!used.has(x)&&!ug.has(grp(x.n)));
     if(!c.length){reuse=true;c=p.filter(x=>!day.has(x));if(!c.length)c=p}
-    if(near){const same=c.filter(x=>x.a==='多處'||zoneOf(x.a)===zoneOf(near));if(same.length)c=same}
+    if(near){const dz=curZ;const same=c.filter(x=>x.a==='多處'||zoneOf(x.a)===zoneOf(near)||(o.pick&&o.pick.has(x.n)&&dz.has(zoneOf(x.a))));if(same.length)c=same}
     c=c.map(x=>[x,sc(x)+(near?nearN(o.dest,x.a,near):0)]).sort((a,b)=>b[1]-a[1]);
     used.add(c[0][0]);day.add(c[0][0]);return c[0][0]};
   const uS=new Set(),uF=new Set(),days=[];
@@ -1604,6 +1645,23 @@ function plan(o){
   const pickDay=dS=>{
     const free=sp.filter(x=>!uS.has(x));
     if(free.length<1)return null;
+    if(o.pick&&o.pick.size){ // 自己挑：優先把挑的景點排完，同一區的放同一天
+      const fp=free.filter(x=>o.pick.has(x.n)),left=o.days-days.length;
+      if(fp.length){
+        const per=Math.max(1,Math.min(ns,Math.ceil(fp.length/left)));
+        const gz={};fp.forEach(x=>{(gz[zoneOf(x.a)]=gz[zoneOf(x.a)]||[]).push(x)});
+        const top=Object.values(gz).sort((a,b)=>b.length-a.length)[0].sort((a,b)=>ss(b)-ss(a));
+        const sel=top.slice(0,per);
+        const rest=fp.filter(x=>!sel.includes(x)).map(x=>[x,nearN(o.dest,x.a,sel[0].a)]).sort((a,b)=>b[1]-a[1]);
+        while(sel.length<per&&rest.length)sel.push(rest.shift()[0]);
+        if(sel.length<ns&&!(sel.length===1&&sel[0].h>=3)){
+          const fill=free.filter(x=>!sel.includes(x)&&!o.pick.has(x.n)&&zoneOf(x.a)===zoneOf(sel[0].a)).sort((a,b)=>ss(b)-ss(a));
+          while(sel.length<ns&&fill.length)sel.push(fill.shift());
+        }
+        sel.forEach(x=>{uS.add(x);dS.add(x)});
+        return sel;
+      }
+    }
     const kidPref=kid||o.likes.includes('k');
     const big=x=>x.h>=3;
     const g={};free.forEach(x=>{(g[zoneOf(x.a)]=g[zoneOf(x.a)]||[]).push(x)});
@@ -1629,6 +1687,7 @@ function plan(o){
     const dS=new Set(),dF=new Set();
     let s=pickDay(dS);
     if(!s){s=[];s.push(pick(sp,ss,null,uS,dS));for(let i=1;i<ns;i++)s.push(pick(sp,ss,s[0].a,uS,dS))}
+    curZ=new Set(s.map(x=>zoneOf(x.a)));
     const mark=x=>({...x,kind:x.m==='m'?'用餐':'點心'});
     const day=p=>{const q=p.filter(x=>!NIGHT(x));return q.length?q:p};
     const lunch=mark(pick(day(food('m')),fs,s[0].a,uF,dF));
@@ -1646,6 +1705,7 @@ function plan(o){
   if(REMOTE.has(o.dest)&&o.trans!=='car')warn.add('這個地點的大眾運輸班次較少，景點之間常需要租車或包車，請先查好交通再出發。');
   if(ISLE.has(o.dest))warn.add('離島的船班與航班會受天氣影響，行程請預留彈性。');
   if(NOCAR.has(o.dest)&&o.trans==='car')warn.add('這個地點的市區停車與路況較不方便，實際上多數人會改搭大眾運輸。');
+  if(o.pick&&o.pick.size){const u=new Set();days.forEach(d=>d.forEach(x=>u.add(x.n)));const miss=[...o.pick].filter(n=>!u.has(n));if(miss.length)warn.add('你挑的有 '+miss.length+' 個沒排進去（天數排不下，或離其他地方比較遠）：'+miss.join('、')+'。可以多加一天，或按「改成自己挑」換掉幾個。')}
   return {days,warn:[...warn]};
 }
 
@@ -2001,12 +2061,12 @@ function render(o,r,keep){
         link='<div class="link">'+esc(t)+'</div>';
       }
       if(spotFar(o.dest,d,x))link='<div class="link">'+esc(FAR_SPOT)+'</div>';
-      h+='<div class="it"><div class="tm">'+x.time+'</div><div><div><span class="tag'+(e?' e':'')+(lab==='午餐'?' lu':lab==='點心'?' sn':lab==='晚餐'?' di':'')+'">'+lab+'</span><a class="nm" href="'+esc(placeLink(o,x))+'" target="_blank" rel="noopener" aria-label="在 Google 地圖查看 '+esc(dispN(x))+'（另開分頁）">'+esc(dispN(x))+'<span class="ext" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2h6v6M10 2 3 9" fill="none" stroke="#874B55" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>'
+      h+='<div class="it"><div class="tm">'+x.time+'</div><div><div><span class="tag'+(e?' e':'')+(lab==='午餐'?' lu':lab==='點心'?' sn':lab==='晚餐'?' di':'')+'">'+lab+'</span>'+icoSpan(x)+'<a class="nm" href="'+esc(placeLink(o,x))+'" target="_blank" rel="noopener" aria-label="在 Google 地圖查看 '+esc(dispN(x))+'（另開分頁）">'+esc(dispN(x))+'<span class="ext" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2h6v6M10 2 3 9" fill="none" stroke="#874B55" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>'
         +'<div class="meta">'+esc(x.a)+'｜'+$m(x,o.dest)+(e?'':'｜<span style="white-space:nowrap">約 '+x.h+' 小時</span>')+'</div><div class="note">'+esc(x.d)+'</div>'+(nsLine(x)?'<div class="meta">'+esc(nsLine(x))+'</div>':'')+link+'</div></div>';
     });
     h+='</div>';
   });
-  h+='<button class="ghost" type="button" id="dlp">下載成 PDF</button> <button class="ghost" type="button" id="dl">下載成文字檔</button> <button class="ghost" type="button" id="back">回到上方改條件，再挑一次</button><div class="warn" style="margin-top:10px;font-size:18px;font-weight:600">提醒：這份行程不會自動保存，重新整理或離開頁面就會消失，請記得先下載 PDF 或文字檔。</div><div class="meta" id="pdfnote">按下載後，手機會跳出確認視窗，按「下載」就會存成檔案。</div>'+'<div class="meta" id="dlmsg" aria-live="polite" style="margin-top:6px;color:#8a4b00"></div><textarea id="txtbox" readonly hidden rows="12" style="margin-top:8px"></textarea><div id="pgs"></div>'+routeHTML(o,r);
+  h+='<button class="ghost" type="button" id="dlp">下載成 PDF</button> <button class="ghost" type="button" id="dl">下載成文字檔</button> <button class="ghost" type="button" id="topick">不滿意？改成自己挑</button> <button class="ghost" type="button" id="back">回到上方改條件，再挑一次</button><div class="warn" style="margin-top:10px;font-size:18px;font-weight:600">提醒：這份行程不會自動保存，重新整理或離開頁面就會消失，請記得先下載 PDF 或文字檔。</div><div class="meta" id="pdfnote">按下載後，手機會跳出確認視窗，按「下載」就會存成檔案。</div>'+'<div class="meta" id="dlmsg" aria-live="polite" style="margin-top:6px;color:#8a4b00"></div><textarea id="txtbox" readonly hidden rows="12" style="margin-top:8px"></textarea><div id="pgs"></div>'+routeHTML(o,r);
   out.innerHTML=h;out.hidden=false;
   if(INAPP)$('#pdfnote').textContent='在 LINE、IG 等 App 裡按下載，會改成顯示行程圖片或文字框，長按圖片或複製文字就能保存。';
   const rtOpen=()=>{const v=$('#rtv'),b=$('#rtb');v.hidden=false;b.setAttribute('aria-expanded','true');b.textContent='收起怎麼去';};
@@ -2014,6 +2074,7 @@ function render(o,r,keep){
   out.querySelectorAll('button.rgo').forEach(b=>{b.onclick=()=>{rtOpen();const t=$('#rt'+b.dataset.r);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}});
   out.querySelectorAll('a.rtback').forEach(a=>{a.onclick=e=>{e.preventDefault();const t=$('#day'+a.dataset.back);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}});
   $('#back').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+  $('#topick').onclick=()=>{const pre=[];r.days.forEach(d=>d.forEach(x=>pre.push(x.n)));openPick(o,pre,r.cus&&r.cus.some(c=>c.length))};
   const rer=()=>{const y=window.scrollY;render(o,r,true);window.scrollTo(0,y)};
   out.querySelectorAll('button.cadd').forEach(b=>{b.onclick=()=>{const f=$('#cf'+b.dataset.a);f.hidden=!f.hidden;b.setAttribute('aria-expanded',String(!f.hidden));if(!f.hidden)f.querySelector('input').focus()}});
   out.querySelectorAll('.cform').forEach(f=>{const i=+f.dataset.i;f.querySelector('.cno').onclick=()=>{f.hidden=true;out.querySelector('.cadd[data-a="'+i+'"]').setAttribute('aria-expanded','false')};
@@ -2048,10 +2109,115 @@ function budText(){
 $('#dest').addEventListener('change',budText);
 budText();
 
+
+// ---------- 分類小插圖 ----------
+const IC={
+temple:'<svg viewBox="0 0 40 40"><path d="M6 15 Q20 4 34 15Z" fill="#E28896"/><rect x="9" y="15" width="22" height="3" rx="1.5" fill="#C96F7D"/><rect x="11" y="18" width="18" height="14" fill="#FBE7EA"/><rect x="17" y="23" width="6" height="9" rx="3" fill="#E28896"/><rect x="7" y="32" width="26" height="3" rx="1.5" fill="#D9B8BC"/></svg>',
+torii:'<svg viewBox="0 0 40 40"><path d="M5 11 Q20 8 35 11 L34 14 Q20 12 6 14Z" fill="#E28896"/><rect x="9" y="17" width="22" height="3" rx="1.5" fill="#E28896"/><rect x="11" y="13" width="3.4" height="22" rx="1.5" fill="#E28896"/><rect x="25.6" y="13" width="3.4" height="22" rx="1.5" fill="#E28896"/></svg>',
+sea:'<svg viewBox="0 0 40 40"><circle cx="27" cy="13" r="5" fill="#F5D58A"/><path d="M4 22 q4 -4 8 0 t8 0 t8 0 t8 0 V34 H4Z" fill="#A9CDF0"/><path d="M4 28 q4 -4 8 0 t8 0 t8 0 t8 0" stroke="#fff" stroke-width="2" fill="none"/></svg>',
+mountain:'<svg viewBox="0 0 40 40"><path d="M3 33 L15 13 L22 23 L27 16 L37 33Z" fill="#9FC3A7"/><path d="M15 13 L18.5 19 L11.5 19Z" fill="#fff"/><circle cx="30" cy="10" r="4" fill="#F5D58A"/></svg>',
+lake:'<svg viewBox="0 0 40 40"><path d="M5 22 L14 10 L20 17 L26 9 L35 22Z" fill="#9FC3A7"/><ellipse cx="20" cy="28" rx="16" ry="6" fill="#A9CDF0"/><path d="M12 28 h8 M22 30 h6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>',
+park:'<svg viewBox="0 0 40 40"><circle cx="13" cy="15" r="8" fill="#9FC3A7"/><rect x="11.8" y="20" width="2.4" height="13" fill="#B9A08A"/><g fill="#F2B8BE"><circle cx="27" cy="25" r="3"/><circle cx="31" cy="28" r="3"/><circle cx="23" cy="28" r="3"/><circle cx="27" cy="31" r="3"/></g><circle cx="27" cy="28" r="2" fill="#F5D58A"/></svg>',
+street:'<svg viewBox="0 0 40 40"><rect x="7" y="16" width="26" height="18" rx="2" fill="#FBE7EA"/><path d="M5 11 H35 L33 18 H7Z" fill="#E28896"/><path d="M11 11 L10 18 M17 11 L16.5 18 M23 11 L23.5 18 M29 11 L30 18" stroke="#fff" stroke-width="2"/><rect x="11" y="22" width="8" height="12" rx="1" fill="#A9CDF0"/><rect x="22" y="22" width="8" height="6" rx="1" fill="#fff"/></svg>',
+museum:'<svg viewBox="0 0 40 40"><path d="M5 14 L20 6 L35 14Z" fill="#C9B3EC"/><rect x="7" y="14" width="26" height="3" fill="#B39BDB"/><g fill="#E6DCF7"><rect x="9" y="18" width="4" height="12"/><rect x="18" y="18" width="4" height="12"/><rect x="27" y="18" width="4" height="12"/></g><rect x="6" y="30" width="28" height="4" rx="1" fill="#B39BDB"/></svg>',
+kids:'<svg viewBox="0 0 40 40"><circle cx="20" cy="17" r="11" fill="none" stroke="#A9CDF0" stroke-width="2.4"/><path d="M20 6 V28 M9 17 H31 M12.2 9.2 L27.8 24.8 M27.8 9.2 L12.2 24.8" stroke="#A9CDF0" stroke-width="1.4"/><g fill="#F2B8BE"><circle cx="20" cy="6" r="2.6"/><circle cx="31" cy="17" r="2.6"/><circle cx="9" cy="17" r="2.6"/></g><path d="M20 17 L13 35 H27Z" fill="#E28896"/></svg>',
+tower:'<svg viewBox="0 0 40 40"><path d="M20 4 L23 16 L26 35 H14 L17 16Z" fill="#E28896"/><rect x="15" y="15" width="10" height="3" rx="1.5" fill="#C96F7D"/><rect x="13" y="25" width="14" height="3" rx="1.5" fill="#C96F7D"/><circle cx="31" cy="10" r="3" fill="#F5D58A"/></svg>',
+night:'<svg viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="9" fill="#5F6B8A"/><circle cx="25" cy="14" r="6" fill="#F5D58A"/><circle cx="28" cy="12" r="5.4" fill="#5F6B8A"/><g fill="#F2B8BE"><circle cx="11" cy="28" r="3"/><circle cx="19" cy="28" r="3"/><circle cx="27" cy="28" r="3"/></g><path d="M8 25 Q20 20 32 25" stroke="#fff" stroke-width="1" fill="none"/></svg>',
+coffee:'<svg viewBox="0 0 40 40"><path d="M14 9 q2 -3 0 -5 M20 9 q2 -3 0 -5" stroke="#C9B3EC" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M8 13 H28 V24 Q28 32 18 32 Q8 32 8 24Z" fill="#fff" stroke="#C99A86" stroke-width="1.6"/><path d="M28 16 Q34 16 34 21 Q34 26 28 25" stroke="#C99A86" stroke-width="1.6" fill="none"/><path d="M10 16 H26" stroke="#B48A74" stroke-width="3"/><rect x="5" y="33" width="26" height="2.4" rx="1.2" fill="#E9D3C7"/></svg>',
+dessert:'<svg viewBox="0 0 40 40"><path d="M10 18 Q10 8 20 8 Q30 8 30 18Z" fill="#F2B8BE"/><circle cx="20" cy="7" r="3" fill="#E28896"/><path d="M8 18 H32 L28 33 H12Z" fill="#A9CDF0"/><path d="M12 22 H28" stroke="#fff" stroke-width="1.6"/></svg>',
+bread:'<svg viewBox="0 0 40 40"><path d="M6 22 Q6 11 20 11 Q34 11 34 22 V30 Q34 32 32 32 H8 Q6 32 6 30Z" fill="#F5D58A"/><path d="M6 22 Q6 11 20 11 Q34 11 34 22Z" fill="#E7B66B"/><path d="M14 15 l3 4 M20 14 l3 4 M26 15 l3 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>',
+noodle:'<svg viewBox="0 0 40 40"><path d="M25 4 L33 18 M29 4 L35 17" stroke="#B9A08A" stroke-width="1.8" stroke-linecap="round"/><path d="M5 18 H35 Q35 33 20 33 Q5 33 5 18Z" fill="#FBE7EA" stroke="#E28896" stroke-width="1.6"/><path d="M8 18 q2.5 -4 5 0 q2.5 -4 5 0 q2.5 -4 5 0 q2.5 -4 5 0" stroke="#F5D58A" stroke-width="2" fill="none"/></svg>',
+hotpot:'<svg viewBox="0 0 40 40"><path d="M13 10 q2 -3 0 -6 M20 10 q2 -3 0 -6 M27 10 q2 -3 0 -6" stroke="#C9B3EC" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M6 15 H34 V25 Q34 33 20 33 Q6 33 6 25Z" fill="#E28896"/><rect x="3" y="15" width="34" height="4" rx="2" fill="#C96F7D"/><circle cx="14" cy="23" r="2.4" fill="#FBE7EA"/><circle cx="22" cy="25" r="2.4" fill="#9FC3A7"/></svg>',
+meat:'<svg viewBox="0 0 40 40"><path d="M7 33 L33 7" stroke="#B9A08A" stroke-width="2" stroke-linecap="round"/><g fill="#E7A27A"><rect x="9" y="22" width="9" height="9" rx="3" transform="rotate(-45 13.5 26.5)"/><rect x="16" y="15" width="9" height="9" rx="3" transform="rotate(-45 20.5 19.5)"/><rect x="23" y="8" width="9" height="9" rx="3" transform="rotate(-45 27.5 12.5)"/></g></svg>',
+fish:'<svg viewBox="0 0 40 40"><path d="M6 20 Q16 9 28 20 Q16 31 6 20Z" fill="#A9CDF0"/><path d="M27 20 L35 13 V27Z" fill="#7FB0E0"/><circle cx="12" cy="18.5" r="1.6" fill="#fff"/><path d="M16 15 q2 5 0 10" stroke="#fff" stroke-width="1.4" fill="none"/></svg>',
+rice:'<svg viewBox="0 0 40 40"><path d="M8 18 Q8 9 20 9 Q32 9 32 18Z" fill="#fff" stroke="#E9DCCF" stroke-width="1.2"/><circle cx="16" cy="14" r="2" fill="#E28896"/><path d="M21 13 h6" stroke="#9FC3A7" stroke-width="2.4" stroke-linecap="round"/><path d="M5 18 H35 Q35 33 20 33 Q5 33 5 18Z" fill="#A9CDF0"/><path d="M10 23 H30" stroke="#fff" stroke-width="1.6"/></svg>'
+};
+function icoOf(x){
+  const t=x.n+' '+(x.d||'');
+  if(x.kind==='景點'||x.h!==undefined&&x.m===undefined){
+    if(/夜市/.test(x.n))return IC.night;
+    if(/神社|大社|鳥居|稻荷/.test(t))return IC.torii;
+    if(/寺|宮|廟|教堂|禪|聖殿|書院|陵/.test(x.n))return IC.temple;
+    if(/塔|101|展望|SKY|天空|觀景|大樓|摩天輪/.test(x.n))return IC.tower;
+    if(/海|灘|岬|燈塔|島|灣|港|浦|海岸|碼頭/.test(x.n))return IC.sea;
+    if(/湖|潭|池|溪|瀑布|濕地|水庫/.test(x.n))return IC.lake;
+    if(/山|森林|步道|峽|峰|溫泉|草原|農場|牧場|高地|窟|地形|竹林/.test(x.n))return IC.mountain;
+    if(/公園|花園|植物|庭園|園$/.test(x.n))return IC.park;
+    if(/街|市場|商店|百貨|購物|老街|町|巷|村|商場|小路|通$/.test(x.n))return IC.street;
+    if(/館|博物|美術|文化|園區|中心|城|故居|古蹟|樓|堂/.test(x.n))return IC.museum;
+    if(/街|市場|商店|百貨|購物|老街|町|巷|村|商場|小路|通$/.test(x.n))return IC.street;
+    if(x.t&&x.t.includes('k'))return IC.kids;
+    return x.t&&x.t.includes('n')?IC.mountain:x.t&&x.t.includes('s')?IC.street:IC.museum;
+  }
+  if(/夜市/.test(x.n))return IC.night;
+  if(/咖啡|Coffee|COFFEE|Cafe|cafe|CAFE|珈琲|喫茶|茶室|茶屋|茶寮|茶飲|紅茶/.test(x.n))return IC.coffee;
+  if(/麵包|貝果|Bagel|Bakery|製麵包|吐司|OPS|包子/.test(t))return IC.bread;
+  if(/冰|甜|豆花|蛋糕|布丁|麻糬|湯圓|聖代|冰淇淋|糕|餅|巧克力|粉圓|仙草|愛玉|羊羹|和菓子|蛋撻|糖|大福|綠豆|點心/.test(x.n))return IC.dessert;
+  if(/鍋|涮|壽喜燒|火鍋/.test(t))return IC.hotpot;
+  if(/麵|烏龍|蕎麥|拉麵|粉|冬粉|米粉|意麵|沾麵|刀削/.test(x.n))return IC.noodle;
+  if(/壽司|海鮮|海產|魚|蝦|蟹|蚵|河豚|鰻|小卷|鮑|生魚/.test(x.n))return IC.fish;
+  if(/燒肉|烤肉|豬|牛|雞|鴨|羊|串|排|炸/.test(x.n))return IC.meat;
+  if(/飯|丼|便當|定食|米糕|粽|粥|碗粿/.test(x.n))return IC.rice;
+  return x.m==='s'?IC.dessert:IC.rice;
+}
+const icoSpan=x=>x.custom?'':'<span class="ico" aria-hidden="true">'+icoOf(x)+'</span>';
+
+// ---------- 我想自己挑 ----------
+let PICK=new Set();
+function formO(){return {dest:$('#dest').value,days:+$('#days').value,who:$('#who').value,ppl:+$('#ppl').value||1,
+  trans:$('#trans').value,bud:+$('#bud').value,likes:checked('likes'),avoid:checked('avoid'),note:$('#note').value.trim()}}
+function pickPool(o){
+  const {S,F}=D[o.dest],bud=o.bud,kid=o.who==='kid',less=o.who==='elder'||o.avoid.includes('walk'),av=o.avoid;
+  const sp=S.map(x=>({n:x[0],a:x[1],t:x[2],c:x[3],h:x[4],k:x[5],w:x[6],d:x[7],kind:'景點'})).filter(x=>x.c-bud<2&&(!kid||x.k)&&(!less||x.w<3));
+  let fo=F.map(x=>({n:x[0],a:x[1],m:x[2],t:x[3],c:x[4],sp:x[5],v:x[6],d:x[7]})).filter(x=>x.c-bud<2&&(!av.includes('spicy')||!x.sp)&&!(av.includes('beef')&&NOBEEF.has(x.n))&&!(av.includes('sea')&&NOSEA.has(x.n))&&!(av.includes('raw')&&NORAW.has(x.n)));
+  if(av.includes('veg')){const v=fo.filter(x=>x.v);if(v.length>=4)fo=v}
+  fo.forEach(x=>x.kind=x.m==='m'?'用餐':'點心');
+  return {sp,fo};
+}
+function pickCard(x){
+  const e=x.kind!=='景點',typ=e?(x.m==='m'?'正餐':'點心・咖啡'):'景點';
+  const meta=x.a+'｜'+typ+'｜'+$m(x,PICKO.dest).replace('每人約 ','約 ')+(e?'':'｜約 '+x.h+' 小時');
+  return '<label class="pc"><input type="checkbox" value="'+esc(x.n)+'"'+(PICK.has(x.n)?' checked':'')+'><span class="pi" aria-hidden="true">'+icoOf(x)+'</span>'
+    +'<span class="pt"><b>'+esc(dispN(x))+'</b><small>'+esc(meta)+'</small><small>'+esc(x.d)+'</small>'
+    +'<a class="pp" href="'+esc(placeLink(PICKO,x))+'" target="_blank" rel="noopener">看照片和評論 ↗</a></span><span class="ck" aria-hidden="true">✓</span></label>';
+}
+let PICKO=null;
+function openPick(o,pre,hadCus){
+  PICKO=o;PICK=new Set(pre||[]);
+  const {sp,fo}=pickPool(o);const all=sp.concat(fo);
+  [...PICK].forEach(n=>{if(!all.some(x=>x.n===n))PICK.delete(n)});
+  const z=ZONES[o.dest]||[],zi=a=>{const i=z.findIndex(g=>g.includes(a));return i>=0?i:(a==='多處'?999:'a:'+a)};
+  const G=new Map();all.forEach(x=>{const k=zi(x.a);if(!G.has(k))G.set(k,{sp:[],fo:[],areas:new Set()});const g=G.get(k);(x.kind==='景點'?g.sp:g.fo).push(x);if(x.a!=='多處')g.areas.add(x.a)});
+  const keys=[...G.keys()].sort((a,b)=>G.get(b).sp.length-G.get(a).sp.length);
+  const ns=(o.who==='kid'||o.who==='elder'||o.avoid.includes('walk'))?2:3;
+  let h='<div class="ph-top"><h2 id="pk-h">自己挑：'+esc(o.dest)+' '+o.days+' 天</h2>'
+    +'<p>點選想去的景點和想吃的店，選好按最下面的「<b>幫我排</b>」。</p>'
+    +'<p>建議挑 <b>'+(o.days*ns-1)+'～'+(o.days*ns)+' 個景點</b>（每天約 '+ns+' 個）。吃的挑幾間想去的就好，<b>沒挑的我會自動補</b>。同一區的會盡量排在同一天。</p>'
+    +'<p class="meta">已經依你填的預算、同行者和飲食需求篩選過。點「看照片和評論」會打開 Google 地圖。</p>'
+    +(hadCus?'<p class="warn meta">提醒：重新排之後，你自己加的行程會清掉，需要的話再加一次。</p>':'')+'</div>';
+  const ttl=k=>k===999?'各區都有':[...G.get(k).areas].join('・');
+  h+='<nav class="pjump" aria-label="跳到區域">'+keys.map((k,i)=>'<a href="#pz'+i+'">'+esc(ttl(k))+'</a>').join('')+'</nav>';
+  keys.forEach((k,zi2)=>{const g=G.get(k);if(!g.sp.length&&!g.fo.length)return;
+    const title=ttl(k);
+    h+='<div class="pz" id="pz'+zi2+'"><h3>'+esc(title)+'</h3><p class="pzs">景點 '+g.sp.length+' 個・美食 '+g.fo.length+' 間</p>';
+    if(g.sp.length)h+='<h4>景點</h4><div class="pgrid">'+g.sp.map(pickCard).join('')+'</div>';
+    if(g.fo.length)h+='<h4>美食</h4><div class="pgrid">'+g.fo.map(pickCard).join('')+'</div>';
+    h+='</div>'});
+  h+='<div class="pbar"><div class="pcnt" id="pcnt" aria-live="polite"></div><button type="button" class="c" id="pclr">清除</button><button type="button" id="pgo">幫我排</button></div>';
+  const P=$('#pick');P.innerHTML=h;P.hidden=false;$('#out').hidden=true;
+  const cnt=()=>{const s=all.filter(x=>PICK.has(x.n)),a=s.filter(x=>x.kind==='景點').length,b=s.length-a;
+    $('#pcnt').innerHTML='已選 景點 <b>'+a+'</b>・美食 <b>'+b+'</b>'+(a>o.days*ns?'<br><span class="warn">景點有點多，排不下的會提醒你</span>':'')};
+  P.querySelectorAll('.pc input').forEach(i=>{i.onchange=()=>{i.checked?PICK.add(i.value):PICK.delete(i.value);cnt()}});
+  $('#pclr').onclick=()=>{PICK.clear();P.querySelectorAll('.pc input').forEach(i=>i.checked=false);cnt()};
+  $('#pgo').onclick=()=>{const oo={...o,pick:new Set(PICK)};P.hidden=true;render(oo,plan(oo))};
+  cnt();P.scrollIntoView({behavior:'smooth'});
+}
+$('#pickbtn').onclick=()=>openPick(formO(),[]);
 $('#f').addEventListener('submit',e=>{
   e.preventDefault();
   const o={dest:$('#dest').value,days:+$('#days').value,who:$('#who').value,ppl:+$('#ppl').value||1,
     trans:$('#trans').value,bud:+$('#bud').value,likes:checked('likes'),avoid:checked('avoid'),note:$('#note').value.trim()};
+  $('#pick').hidden=true;
   render(o,plan(o));
 });
 </script>

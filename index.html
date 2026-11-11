@@ -2304,10 +2304,9 @@ function pickCard(x){
 let PICKO=null;
 function openPick(o,pre,hadCus){
   PICKO=o;PICK=new Set(pre||[]);
-  const {sp,fo}=pickPool(o);const all=sp.concat(fo);
+  const {sp,fo}=pickPool(o);sp.sort((a,b)=>(needPref(o,b)?1:0)-(needPref(o,a)?1:0));const all=sp.concat(fo);
   [...PICK].forEach(n=>{if(!all.some(x=>x.n===n))PICK.delete(n)});
   const z=ZONES[o.dest]||[],zi=a=>{const i=z.findIndex(g=>g.includes(a));return i>=0?i:(a==='多處'?999:'a:'+a)};
-  sp.sort((a,b)=>(needPref(o,b)?1:0)-(needPref(o,a)?1:0));
   const G=new Map();all.forEach(x=>{const k=zi(x.a);if(!G.has(k))G.set(k,{sp:[],fo:[],areas:new Set()});const g=G.get(k);(x.kind==='景點'?g.sp:g.fo).push(x);if(x.a!=='多處')g.areas.add(x.a)});
   const keys=[...G.keys()].sort((a,b)=>G.get(b).sp.length-G.get(a).sp.length);
   const ns=(o.who==='kid'||o.who==='elder'||o.avoid.includes('walk'))?2:3;

@@ -18,7 +18,7 @@ fieldset{border:0;padding:0;margin:0 0 20px}
 label.t,legend{display:block;font-weight:600;margin-bottom:6px;padding:0}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:520px){.row{grid-template-columns:1fr}}
-select,input[type=number],textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+select,input[type=number],input#ban,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
 .chk{display:flex;flex-wrap:wrap;gap:8px}
 .chk label{border:1px solid var(--line);border-radius:8px;padding:5px 14px;cursor:pointer;user-select:none;background:#fff;transition:background .15s}
 .chk label:hover{background:var(--soft)}
@@ -227,6 +227,7 @@ main{position:relative;z-index:1}
 .pbar{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:6px 0 0;box-shadow:0 -6px 18px rgba(135,75,85,.12)}
 .pbar .pcnt{flex:1;font-size:14px;line-height:1.4}
 .pbar .pcnt b{color:var(--main)}
+.pbar .ptip{display:block;font-size:13px;line-height:1.5;margin-top:2px}
 .pbar button{width:auto;margin:0;padding:11px 18px}
 .pbar button.c{background:none;color:var(--main);border:1px solid var(--main);padding:10px 12px}
 .it .ico{display:inline-flex;vertical-align:-9px;width:30px;height:30px;border-radius:9px;background:var(--soft);align-items:center;justify-content:center;margin-right:6px}
@@ -330,6 +331,9 @@ main{position:relative;z-index:1}
 <label><input type="checkbox" value="raw">不吃生食</label>
 <label><input type="checkbox" value="late">不想太早起</label>
 </div>
+<label class="t" for="ban" style="margin-top:12px">其他不吃的（選填）</label>
+<input type="text" id="ban" maxlength="40" autocomplete="off" placeholder="例如：不吃豬、不吃羊、蛋奶過敏">
+<div class="meta">可以填好幾個，用「、」或空白隔開。我會從店名和介紹判斷，含有的店會先排除。</div>
 <div class="meta">飲食限制是依我清單裡已知的菜色來篩，不一定涵蓋店裡所有餐點，用餐前請自己再確認。</div></fieldset>
 <fieldset><label class="t" for="note">其他提醒（選填）</label>
 <textarea id="note" rows="2" placeholder="例如：記得帶護照、下午想留點休息時間"></textarea>
@@ -1621,7 +1625,7 @@ function plan(o){
   const nightS=sp.filter(NIGHT);for(let i=sp.length-1;i>=0;i--)if(NIGHT(sp[i]))sp.splice(i,1);
   const base=F.map(x=>({n:x[0],a:x[1],m:x[2],t:x[3],c:x[4],sp:x[5],v:x[6],d:x[7]})).filter(x=>x.c-bud<2);
   const av=o.avoid;
-  const all=base.filter(x=>(!av.includes('spicy')||!x.sp)&&!(av.includes('beef')&&NOBEEF.has(x.n))&&!(av.includes('sea')&&NOSEA.has(x.n))&&!(av.includes('raw')&&NORAW.has(x.n)));
+  const all=base.filter(x=>!banHit(o,x)&&(!av.includes('spicy')||!x.sp)&&!(av.includes('beef')&&NOBEEF.has(x.n))&&!(av.includes('sea')&&NOSEA.has(x.n))&&!(av.includes('raw')&&NORAW.has(x.n)));
   const fd=all.filter(x=>!o.avoid.includes('veg')||x.v);
   if(!sp.length) return {err:'依目前條件找不到合適的景點，請放寬預算或特殊需求再試一次。'};
   const food=m=>{let p=fd.filter(x=>x.m===m);
@@ -1709,8 +1713,54 @@ function plan(o){
   return {days,warn:[...warn]};
 }
 
+
+// ---------- 自行填寫的飲食限制 ----------
+const BAN_DICT={
+ 豬:['豬','豚','叉燒','排骨','肉燥','魯肉','滷肉','爌肉','控肉','割包','刈包','肉圓','香腸','大腸','米腸','貢丸','培根','火腿','小籠包','湯包','餃','擔仔麵','拉麵','沾麵','燒賣','五花','肉粽','米糕','碗粿','肉羹','扁食','餛飩','雲吞','包子','豬排','Katsukura','とんかつ','部隊鍋','湯飯','돼지'],
+ 牛:['牛','和牛','壽喜燒','すき焼','燒肉','漢堡','牛排','Steak'],
+ 羊:['羊','成吉思汗'],
+ 雞:['雞','鶏','親子丼','水炊','唐揚','炸雞'],
+ 鴨:['鴨','鵝'],
+ 海鮮:['海鮮','海產','魚','蝦','蟹','蚵','牡蠣','貝','鮑','章魚','魷魚','小卷','花枝','透抽','壽司','刺身','鰻','河豚','鯖','明太子','天婦羅','天丼','蛤','海膽','鮪','魚丸','蚵仔'],
+ 魚:['魚','壽司','刺身','鰻','河豚','鯖','鮪','明太子','魚丸'],
+ 蝦:['蝦','天婦羅','天丼'],
+ 蟹:['蟹'],
+ 貝:['貝','蚵','牡蠣','蛤','鮑','干貝'],
+ 蛋:['蛋','玉子','布丁','蛋撻','蛋捲','蛋包','親子丼'],
+ 奶:['奶','乳','起司','起士','芝士','拿鐵','冰淇淋','霜淇淋','優格','起司塔','蛋糕','鬆餅','聖代'],
+ 花生:['花生','沙茶'],
+ 內臟:['內臟','大腸','豬心','豬肝','豬血','米腸','牛雜','もつ','腸'],
+ 酒:['酒','居酒屋','紹興','清酒','啤酒'],
+ 辣:['辣','麻辣','泡菜','咖哩','冬陰','部隊鍋'],
+ 生食:['生魚','刺身','壽司','海鮮丼','生'],
+ 麵:['麵','拉麵','烏龍','蕎麥','意麵','米粉','冬粉'],
+ 甜:['甜','糖','冰','蛋糕','布丁','甜點']
+};
+const BAN_ALIAS={豬肉:'豬',豬:'豬',牛肉:'牛',牛:'牛',羊肉:'羊',羊:'羊',雞肉:'雞',雞:'雞',鴨肉:'鴨',鴨:'鴨',鵝肉:'鴨',海鮮:'海鮮',海產:'海鮮',魚:'魚',魚肉:'魚',蝦:'蝦',蝦子:'蝦',蟹:'蟹',螃蟹:'蟹',貝:'貝',貝類:'貝',蚵:'貝',蚵仔:'貝',牡蠣:'貝',蛋:'蛋',雞蛋:'蛋',奶:'奶',牛奶:'奶',乳製品:'奶',奶製品:'奶',花生:'花生',內臟:'內臟',酒:'酒',辣:'辣',生食:'生食',生的:'生食',麵:'麵',麵食:'麵',甜食:'甜',甜:'甜'};
+function banTerms(o){
+  if(!o.ban)return [];
+  return o.ban.split(/[、，,\s／\/]+/).map(t=>t.replace(/^(不能吃|不吃|不要|不喜歡|忌口|忌|避開|沒有)/,'').replace(/(過敏|不吃|也不吃)$/,'').trim()).filter(Boolean).flatMap(t=>{
+    if(/蛋奶/.test(t))return ['蛋','奶'];return [t]}).filter((t,i,a)=>a.indexOf(t)===i);
+}
+function banKeys(o){
+  return banTerms(o).map(t=>{const k=BAN_ALIAS[t];return {t,k,keys:k?BAN_DICT[k]:[t]}});
+}
+function banHit(o,x){
+  const B=o._ban||(o._ban=banKeys(o));if(!B.length)return false;
+  const txt=x.n+' '+(x.d||'');
+  return B.some(b=>(b.k==='牛'&&NOBEEF.has(x.n))||((b.k==='海鮮'||b.k==='魚')&&NOSEA.has(x.n))||(b.k==='生食'&&NORAW.has(x.n))||(b.k==='辣'&&x.sp)||b.keys.some(w=>txt.includes(w)));
+}
+function banNotes(o){
+  const B=o._ban||(o._ban=banKeys(o));if(!B.length)return [];
+  const F=D[o.dest].F.map(x=>({n:x[0],sp:x[5],d:x[7]}));const out=[];
+  B.forEach(b=>{const one={...o,_ban:[b]};const n=F.filter(x=>banHit(one,x)).length;
+    out.push(n?'已依你填的「不吃'+b.t+'」，排除 '+n+' 間店名或介紹有提到的店。不過店裡可能還有其他含'+b.t+'的餐點，點餐前請再跟店家確認。'
+      :b.k?'這個地點的清單裡，沒有店名或介紹提到「'+b.t+'」的店。點餐前還是請跟店家確認。':'「'+b.t+'」我沒辦法從清單判斷，所以沒有排除任何店，點餐前請自己確認。')});
+  return out;
+}
 function warns(o,r){
   const a=[...r.warn];
+  banNotes(o).forEach(t=>a.push(t));
   if(FXOF[o.dest])a.push(FX_NOTE);
   if(o.bud===1&&r.days.some(d=>d.some(x=>x.c>=2)))a.push('這份行程含較高花費的項目，請自行評估預算。');
   return a;
@@ -1984,7 +2034,7 @@ function swapDay(o,r,di){
     if(x.kind==='景點')return;
     let ref=x.a;for(let k=i-1;k>=0;k--){if(nd[k].kind==='景點'){ref=nd[k].a;break}}
     let c=F.map(y=>({n:y[0],a:y[1],m:y[2],t:y[3],c:y[4],sp:y[5],v:y[6],d:y[7]}))
-      .filter(y=>y.m===x.m&&y.c-bud<2&&(!av.includes('spicy')||!y.sp)&&!(av.includes('beef')&&NOBEEF.has(y.n))&&!(av.includes('sea')&&NOSEA.has(y.n))&&!(av.includes('raw')&&NORAW.has(y.n))&&(!av.includes('veg')||y.v)&&!(x.time<'18:00'&&NIGHT(y))&&!(x.time>='15:00'&&LUNCH.has(y.n))&&!other.has(y.n)&&!oldN.has(y.n)&&!used.has(y.n)&&![...other,...used,...oldN].some(n=>grp(n)===grp(y.n)));
+      .filter(y=>y.m===x.m&&y.c-bud<2&&(!av.includes('spicy')||!y.sp)&&!(av.includes('beef')&&NOBEEF.has(y.n))&&!(av.includes('sea')&&NOSEA.has(y.n))&&!(av.includes('raw')&&NORAW.has(y.n))&&(!av.includes('veg')||y.v)&&!(x.time<'18:00'&&NIGHT(y))&&!(x.time>='15:00'&&LUNCH.has(y.n))&&!other.has(y.n)&&!oldN.has(y.n)&&!used.has(y.n)&&!banHit(o,y)&&![...other,...used,...oldN].some(n=>grp(n)===grp(y.n)));
     if(c.length){
       c=c.map(y=>[y,fs(y)+nearN(o.dest,y.a,ref)]).sort((p,q)=>q[1]-p[1]);
       const pick=c[0][0];used.add(pick.n);
@@ -2031,6 +2081,8 @@ function cusForm(i){
    +'<p class="meta" style="margin:10px 0 0">⚠️ '+CUS_NOTE+'<br>重新整理或離開頁面後，自己加的行程也會消失，記得下載。</p><p class="cerr warn meta" role="alert" style="margin:4px 0 0"></p>'
    +'<div class="mb"><div class="bt" style="margin-top:10px"><button type="submit">加入</button><button type="button" class="c cno">取消</button></div></div></form>';
 }
+function dayZoneNote(o,d){const sp=d.filter(x=>x.kind==='景點'&&x.a&&x.a!=='多處');const z=new Map();sp.forEach(x=>{const k=zoneIdx(o.dest,x.a);if(!z.has(k))z.set(k,x.a)});
+  return z.size>=2?'<p class="warn meta dzn">⚠️ 這天跨了 '+z.size+' 個區域（'+esc([...z.values()].join('、'))+'），移動時間會比較長，出發前先查好交通。</p>':''}
 function render(o,r,keep){
   const out=$('#out');
   if(r.err){out.innerHTML='<div class="sum"><p class="warn">'+esc(r.err)+'</p></div>';out.hidden=false;return}
@@ -2047,7 +2099,7 @@ function render(o,r,keep){
   withCus(r).days.forEach((d,i)=>{
     const sn=d.filter(x=>x.kind==='景點').map(x=>x.n),fo=d.filter(x=>x.kind!=='景點').map(dispN);
     let last=null;
-    h+='<div class="day" id="day'+i+'" style="scroll-margin-top:16px"><div class="dh"><h3>第 '+(i+1)+' 天</h3><div class="dbtn"><button class="swp" type="button" data-d="'+i+'">更換這一天</button><button class="swp rgo" type="button" data-r="'+i+'">🚃 這天怎麼去</button><button class="swp cadd" type="button" data-a="'+i+'" aria-expanded="false" aria-controls="cf'+i+'">＋ 新增</button></div></div>'+cusForm(i)+'<p class="meta">今天逛：'+esc(sn.join('、'))+'<br>今天吃：'+esc(fo.join('、'))+'</p>';
+    h+='<div class="day" id="day'+i+'" style="scroll-margin-top:16px"><div class="dh"><h3>第 '+(i+1)+' 天</h3><div class="dbtn"><button class="swp" type="button" data-d="'+i+'">更換這一天</button><button class="swp rgo" type="button" data-r="'+i+'">🚃 這天怎麼去</button><button class="swp cadd" type="button" data-a="'+i+'" aria-expanded="false" aria-controls="cf'+i+'">＋ 新增</button></div></div>'+cusForm(i)+'<p class="meta">今天逛：'+esc(sn.join('、'))+'<br>今天吃：'+esc(fo.join('、'))+'</p>'+dayZoneNote(o,d);
     d.forEach(x=>{
       if(x.custom){const ci=r.cus[i].indexOf(x);h+='<div class="it cus"><div class="tm">'+x.time+'</div><div><div><span class="tag cu">'+(x.kind==='景點'?'景點':'美食')+'</span><a class="nm" href="'+esc(placeLink(o,x))+'" target="_blank" rel="noopener" aria-label="在 Google 地圖查看 '+esc(x.n)+'（另開分頁）">'+esc(x.n)+'<span class="ext" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2h6v6M10 2 3 9" fill="none" stroke="#874B55" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div><div class="meta">自己加的</div><div class="link">'+esc(CUS_NOTE)+'</div><button class="swp cdel" type="button" data-d="x" data-cd="'+i+'" data-ci="'+ci+'" style="margin-top:6px">刪除</button></div></div>';return}
       const e=x.kind!=='景點';
@@ -2165,11 +2217,11 @@ const icoSpan=x=>x.custom?'':'<span class="ico" aria-hidden="true">'+icoOf(x)+'<
 // ---------- 我想自己挑 ----------
 let PICK=new Set();
 function formO(){return {dest:$('#dest').value,days:+$('#days').value,who:$('#who').value,ppl:+$('#ppl').value||1,
-  trans:$('#trans').value,bud:+$('#bud').value,likes:checked('likes'),avoid:checked('avoid'),note:$('#note').value.trim()}}
+  trans:$('#trans').value,bud:+$('#bud').value,likes:checked('likes'),avoid:checked('avoid'),note:$('#note').value.trim(),ban:$('#ban').value.trim()}}
 function pickPool(o){
   const {S,F}=D[o.dest],bud=o.bud,kid=o.who==='kid',less=o.who==='elder'||o.avoid.includes('walk'),av=o.avoid;
   const sp=S.map(x=>({n:x[0],a:x[1],t:x[2],c:x[3],h:x[4],k:x[5],w:x[6],d:x[7],kind:'景點'})).filter(x=>x.c-bud<2&&(!kid||x.k)&&(!less||x.w<3));
-  let fo=F.map(x=>({n:x[0],a:x[1],m:x[2],t:x[3],c:x[4],sp:x[5],v:x[6],d:x[7]})).filter(x=>x.c-bud<2&&(!av.includes('spicy')||!x.sp)&&!(av.includes('beef')&&NOBEEF.has(x.n))&&!(av.includes('sea')&&NOSEA.has(x.n))&&!(av.includes('raw')&&NORAW.has(x.n)));
+  let fo=F.map(x=>({n:x[0],a:x[1],m:x[2],t:x[3],c:x[4],sp:x[5],v:x[6],d:x[7]})).filter(x=>x.c-bud<2&&!banHit(o,x)&&(!av.includes('spicy')||!x.sp)&&!(av.includes('beef')&&NOBEEF.has(x.n))&&!(av.includes('sea')&&NOSEA.has(x.n))&&!(av.includes('raw')&&NORAW.has(x.n)));
   if(av.includes('veg')){const v=fo.filter(x=>x.v);if(v.length>=4)fo=v}
   fo.forEach(x=>x.kind=x.m==='m'?'用餐':'點心');
   return {sp,fo};
@@ -2205,18 +2257,22 @@ function openPick(o,pre,hadCus){
     h+='</div>'});
   h+='<div class="pbar"><div class="pcnt" id="pcnt" aria-live="polite"></div><button type="button" class="c" id="pclr">清除</button><button type="button" id="pgo">幫我排</button></div>';
   const P=$('#pick');P.innerHTML=h;P.hidden=false;$('#out').hidden=true;
-  const cnt=()=>{const s=all.filter(x=>PICK.has(x.n)),a=s.filter(x=>x.kind==='景點').length,b=s.length-a;
-    $('#pcnt').innerHTML='已選 景點 <b>'+a+'</b>・美食 <b>'+b+'</b>'+(a>o.days*ns?'<br><span class="warn">景點有點多，排不下的會提醒你</span>':'')};
+  const cnt=()=>{const s=all.filter(x=>PICK.has(x.n)),sps=s.filter(x=>x.kind==='景點'),a=sps.length,b=s.length-a;
+    const zs=new Set(sps.map(x=>zi(x.a))).size;let tip='';
+    if(zs>o.days)tip=o.days<3?'景點分布在 '+zs+' 個區，'+o.days+' 天會比較趕。建議改成 '+Math.min(3,zs)+' 天（回上面改天數，已選的會保留），或少挑幾個。'
+      :'景點分布在 '+zs+' 個區，3 天會比較趕，建議少挑幾個不同區的。';
+    else if(a>o.days*ns)tip='景點有點多，排不下的會提醒你。';
+    $('#pcnt').innerHTML='已選 景點 <b>'+a+'</b>・美食 <b>'+b+'</b>'+(tip?'<br><span class="warn ptip">'+tip+'</span>':'')};
   P.querySelectorAll('.pc input').forEach(i=>{i.onchange=()=>{i.checked?PICK.add(i.value):PICK.delete(i.value);cnt()}});
   $('#pclr').onclick=()=>{PICK.clear();P.querySelectorAll('.pc input').forEach(i=>i.checked=false);cnt()};
   $('#pgo').onclick=()=>{const oo={...o,pick:new Set(PICK)};P.hidden=true;render(oo,plan(oo))};
   cnt();P.scrollIntoView({behavior:'smooth'});
 }
-$('#pickbtn').onclick=()=>openPick(formO(),[]);
+$('#pickbtn').onclick=()=>openPick(formO(),[...PICK]);
 $('#f').addEventListener('submit',e=>{
   e.preventDefault();
   const o={dest:$('#dest').value,days:+$('#days').value,who:$('#who').value,ppl:+$('#ppl').value||1,
-    trans:$('#trans').value,bud:+$('#bud').value,likes:checked('likes'),avoid:checked('avoid'),note:$('#note').value.trim()};
+    trans:$('#trans').value,bud:+$('#bud').value,likes:checked('likes'),avoid:checked('avoid'),note:$('#note').value.trim(),ban:$('#ban').value.trim()};
   $('#pick').hidden=true;
   render(o,plan(o));
 });

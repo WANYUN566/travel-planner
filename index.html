@@ -223,6 +223,7 @@ main{position:relative;z-index:1}
 .pc .pt small{display:block;font-size:12.5px;line-height:1.5;color:var(--sub)}
 .pc .ck{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
 .pc:has(input:checked) .ck{background:var(--main);border-color:var(--main)}
+.pc .pfit{display:inline-block!important;width:auto;background:#E4EFFA;color:#3F5F86!important;border-radius:999px;padding:0 8px;margin:2px 0}
 .pc .pp{display:inline-block;margin-top:4px;font-size:12.5px;color:var(--main);text-decoration:underline;text-underline-offset:3px}
 .pbar{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:6px 0 0;box-shadow:0 -6px 18px rgba(135,75,85,.12)}
 .pbar .pcnt{flex:1;font-size:14px;line-height:1.4}
@@ -331,9 +332,9 @@ main{position:relative;z-index:1}
 <label><input type="checkbox" value="raw">不吃生食</label>
 <label><input type="checkbox" value="late">不想太早起</label>
 </div>
-<label class="t" for="ban" style="margin-top:12px">其他不吃的（選填）</label>
-<input type="text" id="ban" maxlength="40" autocomplete="off" placeholder="例如：不吃豬、不吃羊、蛋奶過敏">
-<div class="meta">可以填好幾個，用「、」或空白隔開。我會從店名和介紹判斷，含有的店會先排除。</div>
+<label class="t" for="ban" style="margin-top:12px">其他需求（選填）</label>
+<input type="text" id="ban" maxlength="40" autocomplete="off" placeholder="例如：雨天備案、不吃豬、不去寺廟、想看夜景">
+<div class="meta">可以填好幾個，用「、」隔開。我會盡量照著排，做不到的會在行程上方告訴你。</div>
 <div class="meta">飲食限制是依我清單裡已知的菜色來篩，不一定涵蓋店裡所有餐點，用餐前請自己再確認。</div></fieldset>
 <fieldset><label class="t" for="note">其他提醒（選填）</label>
 <textarea id="note" rows="2" placeholder="例如：記得帶護照、下午想留點休息時間"></textarea>
@@ -1617,11 +1618,12 @@ const NOCAR=new Set(['東京','香港','澳門','曼谷']);
 const REMOTE=new Set(['沖繩','濟州','新竹縣','苗栗縣','南投縣','雲林縣','嘉義縣','屏東縣','宜蘭縣','花蓮縣','台東縣','澎湖縣','金門縣','連江縣']);
 const ISLE=new Set(['澎湖縣','金門縣','連江縣']);
 function plan(o){
+  needOf(o);
   const {S,F}=D[o.dest], bud=o.bud, kid=o.who==='kid', eld=o.who==='elder';
   const less=eld||o.avoid.includes('walk');
   const warn=new Set(); let reuse=false;
   const sp=S.map(x=>({n:x[0],a:x[1],t:x[2],c:x[3],h:x[4],k:x[5],w:x[6],d:x[7],kind:'景點'}))
-    .filter(x=>x.c-bud<2&&(!kid||x.k)&&(!less||x.w<3));
+    .filter(x=>x.c-bud<2&&(!kid||x.k)&&(!less||x.w<3)&&!needExcl(o,x));
   const nightS=sp.filter(NIGHT);for(let i=sp.length-1;i>=0;i--)if(NIGHT(sp[i]))sp.splice(i,1);
   const base=F.map(x=>({n:x[0],a:x[1],m:x[2],t:x[3],c:x[4],sp:x[5],v:x[6],d:x[7]})).filter(x=>x.c-bud<2);
   const av=o.avoid;
@@ -1633,7 +1635,7 @@ function plan(o){
     if(!p.length){p=base.filter(x=>x.m===m);warn.add('飲食限制較多，我的清單裡找不到完全符合的店，這部分先列一般店家，用餐前請自己確認。')}
     if(o.avoid.includes('veg')&&p.length&&p.length<(m==='m'?6:3)){p=[...p,...all.filter(x=>x.m===m&&!p.includes(x))];warn.add('內建資料的素食店家有限，部分餐點請自行確認是否有素食選項。')}
     return p};
-  const PB=x=>o.pick&&o.pick.has(x.n)?100:0;
+  const PB=x=>(o.pick&&o.pick.has(x.n)?100:0)+(x.kind==='景點'&&needPref(o,x)?12:0);
   const ss=x=>[...x.t].filter(c=>o.likes.includes(c)).length*3+(kid&&x.t.includes('k')?2:0)-Math.max(0,x.c-bud)*2+PB(x);
   const fs=x=>(o.likes.includes(x.t)?3:0)+(o.avoid.includes('veg')&&x.v?5:0)-Math.max(0,x.c-bud)*2+PB(x);
   let curZ=new Set();
@@ -1737,6 +1739,69 @@ const BAN_DICT={
  甜:['甜','糖','冰','蛋糕','布丁','甜點']
 };
 const BAN_ALIAS={豬肉:'豬',豬:'豬',牛肉:'牛',牛:'牛',羊肉:'羊',羊:'羊',雞肉:'雞',雞:'雞',鴨肉:'鴨',鴨:'鴨',鵝肉:'鴨',海鮮:'海鮮',海產:'海鮮',魚:'魚',魚肉:'魚',蝦:'蝦',蝦子:'蝦',蟹:'蟹',螃蟹:'蟹',貝:'貝',貝類:'貝',蚵:'貝',蚵仔:'貝',牡蠣:'貝',蛋:'蛋',雞蛋:'蛋',奶:'奶',牛奶:'奶',乳製品:'奶',奶製品:'奶',花生:'花生',內臟:'內臟',酒:'酒',辣:'辣',生食:'生食',生的:'生食',麵:'麵',麵食:'麵',甜食:'甜',甜:'甜'};
+
+// ---------- 其他需求（自行填寫） ----------
+const NEED_CAT={
+ 室內:{re:/館|博物|美術|百貨|商場|購物中心|地下街|水族|teamLab|Xpark|工廠|藝術中心|文化中心|劇場|圖書|室內|K11|MUSEA|SKY|展望|101|大樓|地下|市場|摩天輪/i,label:'室內景點'},
+ 夜景:{re:/夜景|展望|SKY|塔|101|山頂|摩天輪|天空|觀景|大橋|港|夜市/i,label:'看夜景的地方'},
+ 拍照:{re:/老街|公園|花|海|灘|燈塔|竹林|神社|鳥居|彩虹|村|步道|園區|SKY|展望|湖|潭/i,label:'適合拍照的景點'},
+ 寺廟:{re:/寺|廟|宮|神社|大社|教堂|聖殿|禪/,label:'寺廟、宗教景點'},
+ 爬山:{re:/山|步道|森林|峽|峰|岳/,label:'爬山、步道'},
+ 海邊:{re:/海|灘|島|岬|燈塔|灣|斷崖|石梯|港|浦|七星潭|沙灘/,label:'海邊景點'},
+ 博物館:{re:/館|博物|美術|展/,label:'博物館、展覽'},
+ 購物:{re:/街|市場|百貨|商場|購物|商店|Outlet/i,label:'逛街購物'},
+ 夜市:{re:/夜市/,label:'夜市'},
+ 溫泉:{re:/溫泉|湯/,label:'溫泉'},
+ 動物:{re:/動物|水族|牧場|農場|海洋|企鵝/,label:'動物、親近自然'}
+};
+const NEED_ALIAS={雨天:'室內',下雨:'室內',雨備:'室內',雨天備案:'室內',室內:'室內',避雨:'室內',怕曬:'室內',怕熱:'室內',太熱:'室內',
+ 夜景:'夜景',看夜景:'夜景',拍照:'拍照',打卡:'拍照',網美:'拍照',拍美照:'拍照',寺廟:'寺廟',廟:'寺廟',寺:'寺廟',神社:'寺廟',教堂:'寺廟',宗教:'寺廟',拜拜:'寺廟',
+ 爬山:'爬山',登山:'爬山',健行:'爬山',山:'爬山',步道:'爬山',海邊:'海邊',海:'海邊',沙灘:'海邊',看海:'海邊',博物館:'博物館',美術館:'博物館',展覽:'博物館',看展:'博物館',
+ 購物:'購物',逛街:'購物',血拼:'購物',買東西:'購物',夜市:'夜市',逛夜市:'夜市',溫泉:'溫泉',泡湯:'溫泉',泡溫泉:'溫泉',動物:'動物',動物園:'動物',看動物:'動物'};
+const NEED_FLAG=[
+ [/少走路|不想走|走路少|不要走太多|輕鬆|不要太累|腳不好|膝蓋|長輩|老人家|推車|嬰兒車/,'walk','行程輕鬆（少走路）'],
+ [/早起|晚起|睡晚|睡飽|不要太早|晚點出門/,'late','不想太早起'],
+ [/^(吃素|素食|蔬食|全素|蛋奶素)$/,'veg','吃素'],
+ [/親子|小孩|兒童|小朋友|帶孩子|帶小孩/,'k','親子體驗'],
+ [/美食|小吃|吃貨/,'f','在地小吃'],
+ [/咖啡|甜點|下午茶/,'c','咖啡甜點'],
+ [/歷史|古蹟|文化/,'h','歷史文化'],
+ [/自然|風景|大自然/,'n','自然風景']];
+function needOf(o){
+  if(o._need)return o._need;
+  const N={foods:[],pref:[],excl:[],cheap:[],flags:[],unknown:[]};
+  const raw=(o.ban||'').split(/[、，,；;\s／\/]+/).map(t=>t.trim()).filter(Boolean);
+  const seen=new Set();
+  raw.forEach(t0=>{
+    if(seen.has(t0))return;seen.add(t0);
+    const t=t0.replace(/^(我|想要|想|希望|要|有)/,'');
+    for(const [re,v,lab] of NEED_FLAG){if(re.test(t)){N.flags.push({t:t0,v,lab});return}}
+    if(/免費|省錢|便宜|小資|不要太貴|預算少/.test(t)){N.cheap.push(t0);return}
+    const food=/^(不能吃|不吃|不要吃|忌口|忌)/.test(t)||/過敏$/.test(t);
+    const core=t.replace(/^(不能吃|不吃|不要吃|忌口|忌|不想去|不要去|不去|不想|不要|避開|不喜歡|不)/,'').replace(/(過敏|不吃|也不吃|備案|行程|景點|的地方)$/,'').trim();
+    const neg=/^(不想去|不要去|不去|不想|不要|避開|不喜歡|不)/.test(t)&&!food;
+    if(!food){const c=NEED_ALIAS[core]||NEED_ALIAS[t];if(c){(neg?N.excl:N.pref).push({t:t0,c});return}}
+    const parts=/蛋奶/.test(core)?['蛋','奶']:[core||t];
+    parts.forEach(w=>{const k=BAN_ALIAS[w];if(k||food)N.foods.push({t:w,k,keys:k?BAN_DICT[k]:[w]});else N.unknown.push(t0)});
+  });
+  o._need=N;o._ban=N.foods;
+  N.flags.forEach(f=>{if(f.v==='walk'||f.v==='late'||f.v==='veg'){if(!o.avoid.includes(f.v))o.avoid=[...o.avoid,f.v]}else if(!o.likes.includes(f.v))o.likes=[...o.likes,f.v]});
+  return N;
+}
+const needPref=(o,x)=>needOf(o).pref.some(p=>NEED_CAT[p.c].re.test(x.n))||(needOf(o).cheap.length&&x.c===1);
+const needExcl=(o,x)=>needOf(o).excl.some(p=>NEED_CAT[p.c].re.test(x.n));
+function needNotes(o){
+  const N=needOf(o),S=D[o.dest].S.map(x=>({n:x[0],c:x[3]})),out=[];
+  N.flags.forEach(f=>out.push('已依你填的「'+f.t+'」，幫你加上「'+f.lab+'」。'));
+  N.pref.forEach(p=>{const m=S.filter(x=>NEED_CAT[p.c].re.test(x.n));
+    out.push(m.length?'已依你填的「'+p.t+'」，優先排'+NEED_CAT[p.c].label+'（例如：'+m.slice(0,3).map(x=>x.n).join('、')+'）。是不是'+NEED_CAT[p.c].label+'是依名稱判斷，出發前請再確認。'
+      :'這個地點的清單裡比較少'+NEED_CAT[p.c].label+'，「'+p.t+'」沒辦法特別安排，出發前可以再查查。')});
+  N.excl.forEach(p=>{const m=S.filter(x=>NEED_CAT[p.c].re.test(x.n)).length;
+    out.push(m?'已依你填的「'+p.t+'」，不排'+NEED_CAT[p.c].label+'（這個地點有 '+m+' 個）。':'這個地點的清單裡本來就沒有'+NEED_CAT[p.c].label+'。')});
+  if(N.cheap.length)out.push('已依你填的「'+N.cheap[0]+'」，優先排花費比較低的景點。');
+  N.unknown.forEach(t=>out.push('「'+t+'」我沒辦法自動判斷，已經寫在這裡提醒你，出發前請自己留意。'));
+  return out;
+}
 function banTerms(o){
   if(!o.ban)return [];
   return o.ban.split(/[、，,\s／\/]+/).map(t=>t.replace(/^(不能吃|不吃|不要|不喜歡|忌口|忌|避開|沒有)/,'').replace(/(過敏|不吃|也不吃)$/,'').trim()).filter(Boolean).flatMap(t=>{
@@ -1746,20 +1811,21 @@ function banKeys(o){
   return banTerms(o).map(t=>{const k=BAN_ALIAS[t];return {t,k,keys:k?BAN_DICT[k]:[t]}});
 }
 function banHit(o,x){
-  const B=o._ban||(o._ban=banKeys(o));if(!B.length)return false;
+  needOf(o);const B=o._ban;if(!B||!B.length)return false;
   const txt=x.n+' '+(x.d||'');
   return B.some(b=>(b.k==='牛'&&NOBEEF.has(x.n))||((b.k==='海鮮'||b.k==='魚')&&NOSEA.has(x.n))||(b.k==='生食'&&NORAW.has(x.n))||(b.k==='辣'&&x.sp)||b.keys.some(w=>txt.includes(w)));
 }
 function banNotes(o){
-  const B=o._ban||(o._ban=banKeys(o));if(!B.length)return [];
+  needOf(o);const B=o._ban;if(!B||!B.length)return [];
   const F=D[o.dest].F.map(x=>({n:x[0],sp:x[5],d:x[7]}));const out=[];
-  B.forEach(b=>{const one={...o,_ban:[b]};const n=F.filter(x=>banHit(one,x)).length;
+  B.forEach(b=>{const one={...o,_need:{...o._need,foods:[b]},_ban:[b]};const n=F.filter(x=>banHit(one,x)).length;
     out.push(n?'已依你填的「不吃'+b.t+'」，排除 '+n+' 間店名或介紹有提到的店。不過店裡可能還有其他含'+b.t+'的餐點，點餐前請再跟店家確認。'
       :b.k?'這個地點的清單裡，沒有店名或介紹提到「'+b.t+'」的店。點餐前還是請跟店家確認。':'「'+b.t+'」我沒辦法從清單判斷，所以沒有排除任何店，點餐前請自己確認。')});
   return out;
 }
 function warns(o,r){
   const a=[...r.warn];
+  needNotes(o).forEach(t=>a.push(t));
   banNotes(o).forEach(t=>a.push(t));
   if(FXOF[o.dest])a.push(FX_NOTE);
   if(o.bud===1&&r.days.some(d=>d.some(x=>x.c>=2)))a.push('這份行程含較高花費的項目，請自行評估預算。');
@@ -1994,11 +2060,12 @@ function showText(t){
   msg((INAPP?INAPP_TIP:'無法直接存檔。')+'下面是文字內容：點一下文字框，全選後拷貝，再貼到備忘錄就能保存。'+(INAPP?SAFARI_TIP:''));
 }
 function swapDay(o,r,di){
+  needOf(o);
   const {S,F}=D[o.dest],bud=o.bud,kid=o.who==='kid',less=o.who==='elder'||o.avoid.includes('walk'),av=o.avoid;
   const old=r.days[di];
   const other=new Set();r.days.forEach((dd,k)=>{if(k!==di)dd.forEach(x=>other.add(x.n))});
   const oldN=new Set(old.map(x=>x.n));
-  const ss=x=>[...x.t].filter(c=>o.likes.includes(c)).length*3+(kid&&x.t.includes('k')?2:0)-Math.max(0,x.c-bud)*2;
+  const ss=x=>[...x.t].filter(c=>o.likes.includes(c)).length*3+(kid&&x.t.includes('k')?2:0)-Math.max(0,x.c-bud)*2+(needPref(o,x)?12:0);
   const fs=x=>(o.likes.includes(x.t)?3:0)+(av.includes('veg')&&x.v?5:0)-Math.max(0,x.c-bud)*2;
   const zoneOf=a=>{const z=ZONES[o.dest]||[],i=z.findIndex(g=>g.includes(a));return i>=0?i:'a:'+a};
   const nd=old.slice();
@@ -2006,7 +2073,7 @@ function swapDay(o,r,di){
   const slots=[];old.forEach((x,i)=>{if(x.kind==='景點')slots.push(i)});
   const ns=slots.length;
   let pool=S.map(x=>({n:x[0],a:x[1],t:x[2],c:x[3],h:x[4],k:x[5],w:x[6],d:x[7],kind:'景點'}))
-    .filter(x=>x.c-bud<2&&(!kid||x.k)&&(!less||x.w<3)&&!other.has(x.n)&&!NIGHT(x));
+    .filter(x=>x.c-bud<2&&(!kid||x.k)&&(!less||x.w<3)&&!other.has(x.n)&&!NIGHT(x)&&!needExcl(o,x));
   slots.forEach(i=>{if(!pool.some(x=>x.n===old[i].n))pool.push(old[i])});
   if(ns===1)pool=pool.filter(x=>x.h>=3);
   if(ns>0&&pool.length>=ns){
@@ -2219,8 +2286,9 @@ let PICK=new Set();
 function formO(){return {dest:$('#dest').value,days:+$('#days').value,who:$('#who').value,ppl:+$('#ppl').value||1,
   trans:$('#trans').value,bud:+$('#bud').value,likes:checked('likes'),avoid:checked('avoid'),note:$('#note').value.trim(),ban:$('#ban').value.trim()}}
 function pickPool(o){
+  needOf(o);
   const {S,F}=D[o.dest],bud=o.bud,kid=o.who==='kid',less=o.who==='elder'||o.avoid.includes('walk'),av=o.avoid;
-  const sp=S.map(x=>({n:x[0],a:x[1],t:x[2],c:x[3],h:x[4],k:x[5],w:x[6],d:x[7],kind:'景點'})).filter(x=>x.c-bud<2&&(!kid||x.k)&&(!less||x.w<3));
+  const sp=S.map(x=>({n:x[0],a:x[1],t:x[2],c:x[3],h:x[4],k:x[5],w:x[6],d:x[7],kind:'景點'})).filter(x=>x.c-bud<2&&(!kid||x.k)&&(!less||x.w<3)&&!needExcl(o,x));
   let fo=F.map(x=>({n:x[0],a:x[1],m:x[2],t:x[3],c:x[4],sp:x[5],v:x[6],d:x[7]})).filter(x=>x.c-bud<2&&!banHit(o,x)&&(!av.includes('spicy')||!x.sp)&&!(av.includes('beef')&&NOBEEF.has(x.n))&&!(av.includes('sea')&&NOSEA.has(x.n))&&!(av.includes('raw')&&NORAW.has(x.n)));
   if(av.includes('veg')){const v=fo.filter(x=>x.v);if(v.length>=4)fo=v}
   fo.forEach(x=>x.kind=x.m==='m'?'用餐':'點心');
@@ -2230,7 +2298,7 @@ function pickCard(x){
   const e=x.kind!=='景點',typ=e?(x.m==='m'?'正餐':'點心・咖啡'):'景點';
   const meta=x.a+'｜'+typ+'｜'+$m(x,PICKO.dest).replace('每人約 ','約 ')+(e?'':'｜約 '+x.h+' 小時');
   return '<label class="pc"><input type="checkbox" value="'+esc(x.n)+'"'+(PICK.has(x.n)?' checked':'')+'><span class="pi" aria-hidden="true">'+icoOf(x)+'</span>'
-    +'<span class="pt"><b>'+esc(dispN(x))+'</b><small>'+esc(meta)+'</small><small>'+esc(x.d)+'</small>'
+    +'<span class="pt"><b>'+esc(dispN(x))+'</b>'+(x.kind==='景點'&&needPref(PICKO,x)?'<small class="pfit">✓ 符合你的需求</small>':'')+'<small>'+esc(meta)+'</small><small>'+esc(x.d)+'</small>'
     +'<a class="pp" href="'+esc(placeLink(PICKO,x))+'" target="_blank" rel="noopener">看照片和評論 ↗</a></span><span class="ck" aria-hidden="true">✓</span></label>';
 }
 let PICKO=null;
@@ -2239,6 +2307,7 @@ function openPick(o,pre,hadCus){
   const {sp,fo}=pickPool(o);const all=sp.concat(fo);
   [...PICK].forEach(n=>{if(!all.some(x=>x.n===n))PICK.delete(n)});
   const z=ZONES[o.dest]||[],zi=a=>{const i=z.findIndex(g=>g.includes(a));return i>=0?i:(a==='多處'?999:'a:'+a)};
+  sp.sort((a,b)=>(needPref(o,b)?1:0)-(needPref(o,a)?1:0));
   const G=new Map();all.forEach(x=>{const k=zi(x.a);if(!G.has(k))G.set(k,{sp:[],fo:[],areas:new Set()});const g=G.get(k);(x.kind==='景點'?g.sp:g.fo).push(x);if(x.a!=='多處')g.areas.add(x.a)});
   const keys=[...G.keys()].sort((a,b)=>G.get(b).sp.length-G.get(a).sp.length);
   const ns=(o.who==='kid'||o.who==='elder'||o.avoid.includes('walk'))?2:3;
@@ -2246,7 +2315,7 @@ function openPick(o,pre,hadCus){
     +'<p>點選想去的景點和想吃的店，選好按最下面的「<b>幫我排</b>」。</p>'
     +'<p>建議挑 <b>'+(o.days*ns-1)+'～'+(o.days*ns)+' 個景點</b>（每天約 '+ns+' 個）。吃的挑幾間想去的就好，<b>沒挑的我會自動補</b>。同一區的會盡量排在同一天。</p>'
     +'<p class="meta">已經依你填的預算、同行者和飲食需求篩選過。點「看照片和評論」會打開 Google 地圖。</p>'
-    +(hadCus?'<p class="warn meta">提醒：重新排之後，你自己加的行程會清掉，需要的話再加一次。</p>':'')+'</div>';
+    +(hadCus?'<p class="warn meta">提醒：重新排之後，你自己加的行程會清掉，需要的話再加一次。</p>':'')+needNotes(o).concat(banNotes(o)).map(t=>'<p class="meta">・'+esc(t)+'</p>').join('')+'</div>';
   const ttl=k=>k===999?'各區都有':[...G.get(k).areas].join('・');
   h+='<nav class="pjump" aria-label="跳到區域">'+keys.map((k,i)=>'<a href="#pz'+i+'">'+esc(ttl(k))+'</a>').join('')+'</nav>';
   keys.forEach((k,zi2)=>{const g=G.get(k);if(!g.sp.length&&!g.fo.length)return;

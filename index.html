@@ -71,6 +71,11 @@ a.nm:hover{text-decoration-color:var(--main)}
 .note{font-size:14px}
 .link{font-size:14px;color:#8a4b00;margin-top:2px}
 footer{margin-top:28px;font-size:13px;color:var(--sub)}
+footer .fp{margin:0 0 6px}
+footer .fline,footer .fcopy{text-align:center}
+footer .fline{margin-top:14px}
+footer .fline a{color:var(--main);text-underline-offset:3px}
+footer .fcopy{font-size:12px;opacity:.85}
 .day{border-top:3px solid var(--dc,var(--main))}
 .day h3{color:var(--dc,var(--main))}
 #out>:nth-child(3){--dc:#4c6e49}
@@ -203,6 +208,16 @@ main{position:relative;z-index:1}
 #pick .ph-top{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin-bottom:14px}
 #pick .ph-top h2{margin:0 0 6px;font-size:22px}
 #pick .ph-top p{margin:4px 0;font-size:15px}
+.ptool{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 10px}
+.pseg{display:flex;border:1px solid var(--main);border-radius:999px;overflow:hidden;background:#fff}
+.pseg button{width:auto;margin:0;padding:8px 14px;border-radius:0;background:#fff;color:var(--main);font-size:14px;font-weight:600}
+.pseg button+button{border-left:1px solid var(--main)}
+.pseg button[aria-pressed=true]{background:var(--main);color:#fff}
+.psch{flex:1 1 180px}
+.psch input{width:100%;font:inherit;font-size:15px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink)}
+.pnone{flex:1 0 100%;margin:0}
+#pick [hidden]{display:none!important}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .pjump{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;margin:0 0 4px}
 .pjump a{flex:0 0 auto;font-size:14px;color:var(--main);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 14px;text-decoration:none;white-space:nowrap}
 .pjump a:hover{background:var(--soft)}
@@ -347,7 +362,7 @@ main{position:relative;z-index:1}
 
 <section id="pick" hidden aria-labelledby="pk-h"></section>
 <section id="out" hidden aria-live="polite"></section>
-<footer>這裡的景點和吃的是我先挑好放進來的範例清單（台灣 22 個縣市，加上日本 6 個（東京、京都、大阪、沖繩、福岡、札幌）、韓國 3 個（首爾、釜山、濟州）、香港、澳門和曼谷，每個地點約 10–26 個景點、11–22 間吃的），不是即時資料，也不是即時搜尋。我只是依你填的條件，從清單裡挑出來再排順序。營業時間、價格、是否休息，出發前請自己再確認一次。</footer>
+<footer><p class="fp">這裡的景點和吃的是我先挑好放進來的範例清單（台灣 22 個縣市，加上日本 6 個（東京、京都、大阪、沖繩、福岡、札幌）、韓國 3 個（首爾、釜山、濟州）、香港、澳門和曼谷，每個地點約 10–26 個景點、11–22 間吃的），不是即時資料，也不是即時搜尋。我只是依你填的條件，從清單裡挑出來再排順序。營業時間、價格、是否休息，出發前請自己再確認一次。</p><p class="fp fline">有問題或發現資料有錯，歡迎到 <a href="https://lin.ee/rRfCyGK" target="_blank" rel="noopener">官方 LINE「Yun端」↗</a> 告訴我 ☁️</p><p class="fp fcopy">© 版權所有，本工具僅供購買者個人使用，禁止轉售、出租或公開散布原始檔案／連結</p></footer>
 </main>
 
 <script>
@@ -1839,9 +1854,10 @@ const NONSTORE={'彰化肉圓':['老担阿璋肉圓','阿三肉圓'],'鹿港蚵�
 const grp=n=>{for(const k in NONSTORE){if(k===n||NONSTORE[k].includes(n))return k}return n};
 const dispN=x=>x.n+(x.kind!=='景點'&&NONSTORE[x.n]?'（非店名）':'');
 const nsLine=x=>{const e=x.kind!=='景點'&&NONSTORE[x.n];return e?(NIGHT(x)?'夜市裡多家可選':'當地多家可選')+(e.length?'，例如：'+e.join('、'):''):''};
-function linkTxt(x,last){
+function linkTxt(x,last,dest){
   return x.a==='多處'?'各區都有分店，挑逛完「'+last.n+'」後離你最近的一間。'
     :x.a===last.a?'逛完「'+last.n+'」就在附近，直接過去吃。'
+    :dest&&zoneIdx(dest,x.a)===zoneIdx(dest,last.a)?'跟「'+last.n+'」在同一區，順路過去吃。'
     :'接在「'+last.n+'」之後，位置稍遠，出發前先確認怎麼過去。';
 }
 const placeQ=(o,x)=>o.dest+' '+x.n.replace(/（[^）]*）$/,'')+(x.a&&x.a!=='多處'?' '+x.a:'');
@@ -1884,7 +1900,7 @@ function toText(o,r){
       L.push('       '+$m(x,o.dest)+(e?'':'｜約 '+x.h+' 小時'));
       L.push('       '+x.d);
       if(nsLine(x))L.push('       '+nsLine(x));
-      if(e&&last)L.push('       '+linkTxt(x,last));
+      if(e&&last)L.push('       '+linkTxt(x,last,o.dest));
       if(spotFar(o.dest,d,x))L.push('       '+FAR_SPOT);
     });
     L.push('');
@@ -1983,7 +1999,7 @@ function drawPagesK(o,r,K){
         para(x.a+'｜'+$m(x,o.dest)+(e?'':'｜約 '+x.h+' 小時'),22,P.sub,0,CX,0,W-M-50);
         para(x.d,26,P.ink,0,CX,0,W-M-50);
         if(nsLine(x))para(nsLine(x),22,P.sub,0,CX,0,W-M-50);
-        if(e&&last)para('→ '+linkTxt(x,last),22,P.warn,0,CX,0,W-M-50);
+        if(e&&last)para('→ '+linkTxt(x,last,o.dest),22,P.warn,0,CX,0,W-M-50);
         if(spotFar(o.dest,d,x))para('→ '+FAR_SPOT,22,P.warn,0,CX,0,W-M-50);
       }
       y+=Math.round(26*K);
@@ -2174,9 +2190,7 @@ function render(o,r,keep){
       const lab=e?(x.kind==='點心'?'點心':(x.time<'15:00'?'午餐':'晚餐')):'景點';
       let link='';
       if(e&&last){
-        const t=x.a==='多處'?'各區都有分店，挑逛完「'+last.n+'」後離你最近的一間。'
-          :x.a===last.a?'逛完「'+last.n+'」就在附近，直接過去吃。'
-          :'接在「'+last.n+'」之後，位置稍遠，出發前先確認怎麼過去。';
+        const t=linkTxt(x,last,o.dest);
         link='<div class="link">'+esc(t)+'</div>';
       }
       if(spotFar(o.dest,d,x))link='<div class="link">'+esc(FAR_SPOT)+'</div>';
@@ -2316,12 +2330,14 @@ function openPick(o,pre,hadCus){
     +'<p class="meta">已經依你填的預算、同行者和飲食需求篩選過。點「看照片和評論」會打開 Google 地圖。</p>'
     +(hadCus?'<p class="warn meta">提醒：重新排之後，你自己加的行程會清掉，需要的話再加一次。</p>':'')+needNotes(o).concat(banNotes(o)).map(t=>'<p class="meta">・'+esc(t)+'</p>').join('')+'</div>';
   const ttl=k=>k===999?'各區都有':[...G.get(k).areas].join('・');
+  h+='<div class="ptool"><div class="pseg" role="group" aria-label="顯示哪些項目"><button type="button" data-f="all" aria-pressed="true">全部</button><button type="button" data-f="sp" aria-pressed="false">只看景點</button><button type="button" data-f="fo" aria-pressed="false">只看美食</button></div>'
+    +'<label class="psch"><span class="vh">搜尋名稱</span><input type="search" id="psq" placeholder="搜尋名稱，例如：拉麵、寺" autocomplete="off"></label><p class="pnone meta" id="pnone" hidden>找不到符合的項目，換個關鍵字試試。</p></div>';
   h+='<nav class="pjump" aria-label="跳到區域">'+keys.map((k,i)=>'<a href="#pz'+i+'">'+esc(ttl(k))+'</a>').join('')+'</nav>';
   keys.forEach((k,zi2)=>{const g=G.get(k);if(!g.sp.length&&!g.fo.length)return;
     const title=ttl(k);
     h+='<div class="pz" id="pz'+zi2+'"><h3>'+esc(title)+'</h3><p class="pzs">景點 '+g.sp.length+' 個・美食 '+g.fo.length+' 間</p>';
-    if(g.sp.length)h+='<h4>景點</h4><div class="pgrid">'+g.sp.map(pickCard).join('')+'</div>';
-    if(g.fo.length)h+='<h4>美食</h4><div class="pgrid">'+g.fo.map(pickCard).join('')+'</div>';
+    if(g.sp.length)h+='<div class="pk-sp"><h4>景點</h4><div class="pgrid">'+g.sp.map(pickCard).join('')+'</div></div>';
+    if(g.fo.length)h+='<div class="pk-fo"><h4>美食</h4><div class="pgrid">'+g.fo.map(pickCard).join('')+'</div></div>';
     h+='</div>'});
   h+='<div class="pbar"><div class="pcnt" id="pcnt" aria-live="polite"></div><button type="button" class="c" id="pclr">清除</button><button type="button" id="pgo">幫我排</button></div>';
   const P=$('#pick');P.innerHTML=h;P.hidden=false;$('#out').hidden=true;
@@ -2334,6 +2350,15 @@ function openPick(o,pre,hadCus){
   P.querySelectorAll('.pc input').forEach(i=>{i.onchange=()=>{i.checked?PICK.add(i.value):PICK.delete(i.value);cnt()}});
   $('#pclr').onclick=()=>{PICK.clear();P.querySelectorAll('.pc input').forEach(i=>i.checked=false);cnt()};
   $('#pgo').onclick=()=>{const oo={...o,pick:new Set(PICK)};P.hidden=true;render(oo,plan(oo))};
+  let PF='all';
+  const flt=()=>{const q=($('#psq').value||'').trim().toLowerCase();P.dataset.f=PF;let any=0;
+    P.querySelectorAll('.pc').forEach(c=>{const ok=!q||c.textContent.toLowerCase().includes(q);c.hidden=!ok});
+    P.querySelectorAll('.pk-sp,.pk-fo').forEach(b=>{const v=[...b.querySelectorAll('.pc')].some(c=>!c.hidden)&&!(PF==='sp'&&b.classList.contains('pk-fo'))&&!(PF==='fo'&&b.classList.contains('pk-sp'));b.hidden=!v;if(v)any++});
+    P.querySelectorAll('.pz').forEach(z=>{z.hidden=![...z.querySelectorAll('.pk-sp,.pk-fo')].some(b=>!b.hidden)});
+    P.querySelectorAll('.pjump a').forEach(a=>{const z=$(a.getAttribute('href'));a.hidden=!z||z.hidden});
+    $('#pnone').hidden=any>0};
+  P.querySelectorAll('.pseg button').forEach(b=>{b.onclick=()=>{PF=b.dataset.f;P.querySelectorAll('.pseg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));flt()}});
+  $('#psq').oninput=flt;
   cnt();P.scrollIntoView({behavior:'smooth'});
 }
 $('#pickbtn').onclick=()=>openPick(formO(),[...PICK]);
